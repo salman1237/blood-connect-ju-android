@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFF">
+    <!--
+      Status-bar notification icon must be a flat white silhouette — Android
+      strips color and uses only the alpha channel from API 21+, so the fill
+      color here is a convention, not a real rendered color. Simple blood
+      drop, matching the app's brand shape.
+    -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,2C12,2 4.5,11 4.5,15.5C4.5,19.9 7.9,23 12,23C16.1,23 19.5,19.9 19.5,15.5C19.5,11 12,2 12,2Z" />
+</vector>

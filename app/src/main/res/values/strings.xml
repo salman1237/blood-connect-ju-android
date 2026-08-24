@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Blood Connect JU</string>
+    <string name="notification_channel_blood_requests">Blood requests</string>
 </resources>

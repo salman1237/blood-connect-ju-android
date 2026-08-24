@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Firebase — google-services.json is generally safe to commit per Google's
+# own guidance (it's a project identifier, not a secret; access is scoped
+# by package name + API restrictions), but this repo is public and the
+# safer default for a public repo is to keep it local-only.
+app/google-services.json

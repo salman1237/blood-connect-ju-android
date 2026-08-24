@@ -47,6 +47,8 @@ private object Routes {
 fun BloodConnectNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
+    pendingDeepLinkRequestId: Int? = null,
+    onDeepLinkConsumed: () -> Unit = {},
 ) {
     // Held once at this level purely to read isLoggedIn and pick a start
     // destination — the underlying token state is a Hilt-@Singleton-scoped
@@ -145,6 +147,18 @@ fun BloodConnectNavHost(
                 requestId = id,
                 onBack = { navController.navigate(Routes.REQUESTS) { popUpTo(Routes.REQUESTS) { inclusive = true } } },
             )
+        }
+    }
+
+    // A notification tap can arrive before onboarding/home is even resolved
+    // (cold start) — only act on it once the user has actually landed
+    // somewhere inside the app (HOME); onboarding is deliberately not a
+    // valid target, since none of the notifications that carry a request id
+    // can fire for an account that hasn't finished onboarding yet.
+    LaunchedEffect(pendingDeepLinkRequestId, resolvedStart) {
+        if (pendingDeepLinkRequestId != null && resolvedStart == Routes.HOME) {
+            navController.navigate(Routes.requestDetail(pendingDeepLinkRequestId))
+            onDeepLinkConsumed()
         }
     }
 }

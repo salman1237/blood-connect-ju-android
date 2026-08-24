@@ -24,6 +24,7 @@ sealed interface AuthResult {
 class AuthRepository @Inject constructor(
     private val api: ApiService,
     private val tokenStore: TokenStore,
+    private val pushTokenRepository: PushTokenRepository,
     private val json: Json,
 ) {
     val isLoggedIn: Flow<Boolean> = tokenStore.tokenFlow.map { !it.isNullOrBlank() }
@@ -57,6 +58,9 @@ class AuthRepository @Inject constructor(
 
     /** Best-effort server-side revoke — the local token is cleared either way. */
     suspend fun logout() {
+        // Must happen before the token is cleared — unregistering still
+        // needs the (about to be revoked) Bearer token to authenticate.
+        pushTokenRepository.unregisterCurrentToken()
         runCatching { api.logout() }
         tokenStore.clear()
     }
@@ -69,6 +73,7 @@ class AuthRepository @Inject constructor(
             val body = response.body()
             if (response.isSuccessful && body != null) {
                 tokenStore.save(body.token)
+                pushTokenRepository.syncCurrentToken()
                 AuthResult.Success(body.user)
             } else {
                 parseError(response.errorBody()?.string())

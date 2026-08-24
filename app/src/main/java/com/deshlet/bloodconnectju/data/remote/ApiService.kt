@@ -8,11 +8,14 @@ import com.deshlet.bloodconnectju.data.remote.dto.DonorSummaryDto
 import com.deshlet.bloodconnectju.data.remote.dto.LoginRequest
 import com.deshlet.bloodconnectju.data.remote.dto.MessageResponse
 import com.deshlet.bloodconnectju.data.remote.dto.MetaResponse
+import com.deshlet.bloodconnectju.data.remote.dto.RegisterPushTokenRequest
 import com.deshlet.bloodconnectju.data.remote.dto.RegisterRequest
 import com.deshlet.bloodconnectju.data.remote.dto.RequestStatsDto
+import com.deshlet.bloodconnectju.data.remote.dto.UnregisterPushTokenRequest
 import com.deshlet.bloodconnectju.data.remote.dto.UserDto
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -68,4 +71,10 @@ interface ApiService {
 
     @PATCH("requests/{requestId}/responses/{responseId}/confirm-donation")
     suspend fun confirmDonation(@Path("requestId") requestId: Int, @Path("responseId") responseId: Int): Response<BloodRequestDto>
+
+    @POST("push-tokens")
+    suspend fun registerPushToken(@Body body: RegisterPushTokenRequest): Response<Unit>
+
+    @DELETE("push-tokens")
+    suspend fun unregisterPushToken(@Body body: UnregisterPushTokenRequest): Response<Unit>
 }
