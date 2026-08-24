@@ -21,7 +21,13 @@ data class ResponseSummaryDto(
     val id: Int,
     val status: String,
     val donor: DonorRefDto,
+    val requester_confirmed: Boolean = false,
+    val donor_confirmed: Boolean = false,
     val is_mutually_confirmed: Boolean,
+    // Authoritative — same policy checks the web buttons are gated on,
+    // computed server-side rather than reimplemented here.
+    val can_confirm: Boolean = false,
+    val can_confirm_donation: Boolean = false,
 )
 
 /** Mirrors App\Http\Resources\Api\BloodRequestResource. */
@@ -40,6 +46,11 @@ data class BloodRequestDto(
     val expires_at: String? = null,
     val created_at: String? = null,
     val requester: RequesterSummaryDto,
+    // Absent (not just false) from the list feed on purpose — see the
+    // backend resource's comment — so these default to false there rather
+    // than needing a nullable Boolean? everywhere they're read.
+    val can_respond: Boolean = false,
+    val can_fulfill: Boolean = false,
     val responses: List<ResponseSummaryDto>? = null,
 )
 

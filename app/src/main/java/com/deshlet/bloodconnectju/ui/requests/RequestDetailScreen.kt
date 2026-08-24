@@ -13,11 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -29,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.deshlet.bloodconnectju.data.remote.dto.ResponseSummaryDto
 import com.deshlet.bloodconnectju.ui.components.StatusPill
 import com.deshlet.bloodconnectju.ui.components.UrgencyBadge
 
@@ -92,8 +95,43 @@ fun RequestDetailScreen(
                     }
 
                     Spacer(Modifier.size(20.dp))
-                    DetailRow("Posted by", request.requester.name + (request.requester.hall?.let { " · $it" } ?: request.requester.department?.let { " · $it" } ?: ""))
+                    DetailRow(
+                        "Posted by",
+                        request.requester.name + (
+                            request.requester.hall?.let { " · $it" }
+                                ?: request.requester.department?.let { " · $it" }
+                                ?: ""
+                            ),
+                    )
                     DetailRow("Contact", request.contact_method)
+
+                    if (request.can_respond || request.can_fulfill) {
+                        Spacer(Modifier.size(20.dp))
+                        if (request.can_respond) {
+                            Button(
+                                onClick = { viewModel.respond() },
+                                enabled = !uiState.isActing,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Text("I can donate")
+                            }
+                        }
+                        if (request.can_fulfill) {
+                            val label = if (request.status == "open") "Mark donor found" else "Mark fulfilled"
+                            OutlinedButton(
+                                onClick = { viewModel.fulfill() },
+                                enabled = !uiState.isActing,
+                                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                            ) {
+                                Text(label)
+                            }
+                        }
+                    }
+
+                    uiState.errorMessage?.let { message ->
+                        Spacer(Modifier.size(8.dp))
+                        Text(message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                    }
 
                     Spacer(Modifier.size(20.dp))
                     HorizontalDivider()
@@ -108,23 +146,59 @@ fun RequestDetailScreen(
                         )
                     } else {
                         request.responses.forEach { response ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                            ) {
-                                Text(response.donor.name ?: "Donor")
-                                Text(
-                                    if (response.is_mutually_confirmed) "Confirmed" else response.status,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    style = MaterialTheme.typography.bodySmall,
-                                )
-                            }
+                            ResponseRow(response, uiState.isActing, viewModel)
                         }
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun ResponseRow(
+    response: ResponseSummaryDto,
+    isActing: Boolean,
+    viewModel: RequestDetailViewModel,
+) {
+    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(response.donor.name ?: "Donor")
+            Text(
+                statusLabel(response),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+        if (response.can_confirm) {
+            Button(
+                onClick = { viewModel.confirmResponse(response.id) },
+                enabled = !isActing,
+                modifier = Modifier.padding(top = 6.dp),
+            ) {
+                Text("Confirm this donor")
+            }
+        }
+        if (response.can_confirm_donation) {
+            Button(
+                onClick = { viewModel.confirmDonation(response.id) },
+                enabled = !isActing,
+                modifier = Modifier.padding(top = 6.dp),
+            ) {
+                Text("Confirm the donation happened")
+            }
+        }
+    }
+}
+
+private fun statusLabel(response: ResponseSummaryDto): String = when {
+    response.is_mutually_confirmed -> "Donation confirmed"
+    response.status == "confirmed" && (response.requester_confirmed || response.donor_confirmed) -> "Awaiting confirmation"
+    response.status == "confirmed" -> "Confirmed donor"
+    else -> "Responded"
 }
 
 @Composable
