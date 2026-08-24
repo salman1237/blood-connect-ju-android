@@ -6,7 +6,7 @@ import com.deshlet.bloodconnectju.data.remote.dto.AuthResponse
 import com.deshlet.bloodconnectju.data.remote.dto.LoginRequest
 import com.deshlet.bloodconnectju.data.remote.dto.RegisterRequest
 import com.deshlet.bloodconnectju.data.remote.dto.UserDto
-import com.deshlet.bloodconnectju.data.remote.dto.ValidationErrorResponse
+import com.deshlet.bloodconnectju.data.remote.parseApiError
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -81,15 +81,8 @@ class AuthRepository @Inject constructor(
     }
 
     private fun parseError(rawBody: String?): AuthResult.Failure {
-        if (rawBody.isNullOrBlank()) {
-            return AuthResult.Failure("Something went wrong. Please try again.")
-        }
-        return try {
-            val parsed = json.decodeFromString<ValidationErrorResponse>(rawBody)
-            AuthResult.Failure(parsed.message, parsed.errors)
-        } catch (e: Exception) {
-            AuthResult.Failure("Something went wrong. Please try again.")
-        }
+        val (message, fieldErrors) = parseApiError(json, rawBody)
+        return AuthResult.Failure(message, fieldErrors)
     }
 
     private fun deviceName(): String =

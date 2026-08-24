@@ -30,7 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun LoginScreen(
-    onLoggedIn: () -> Unit,
+    onLoggedIn: (hasCompletedOnboarding: Boolean) -> Unit,
     onNavigateToRegister: () -> Unit,
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {

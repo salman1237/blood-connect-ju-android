@@ -32,13 +32,14 @@ class AuthViewModel @Inject constructor(
         .map<Boolean, Boolean?> { it }
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
-    fun login(email: String, password: String, onSuccess: () -> Unit) {
+    /** onSuccess receives whether onboarding is already complete, so the caller can route straight there without an extra round trip — the login/register response already carries it. */
+    fun login(email: String, password: String, onSuccess: (hasCompletedOnboarding: Boolean) -> Unit) {
         viewModelScope.launch {
             _uiState.value = AuthUiState(isLoading = true)
             when (val result = authRepository.login(email, password)) {
                 is AuthResult.Success -> {
                     _uiState.value = AuthUiState()
-                    onSuccess()
+                    onSuccess(result.user.has_completed_onboarding)
                 }
 
                 is AuthResult.Failure -> {

@@ -57,12 +57,13 @@ fun HomeScreen(
                 Text("Welcome, ${user?.name ?: "donor"}!", style = MaterialTheme.typography.headlineSmall)
                 Spacer(Modifier.size(8.dp))
                 Text(user?.email ?: "", style = MaterialTheme.typography.bodyMedium)
-                if (user?.has_completed_onboarding == false) {
-                    Spacer(Modifier.size(8.dp))
+                val currentUser = user
+                currentUser?.donor_profile?.blood_group?.let { bloodGroup ->
+                    Spacer(Modifier.size(4.dp))
                     Text(
-                        "Onboarding not finished yet — that screen lands in the next phase.",
+                        "$bloodGroup · ${currentUser.department ?: currentUser.hall ?: "Campus"}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
+                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
                 Spacer(Modifier.size(24.dp))
