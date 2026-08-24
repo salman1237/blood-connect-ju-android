@@ -29,6 +29,7 @@ val BcDestructiveForeground = Color(0xFFFEFBF8)
 
 val BcSuccess = Color(0xFF489A68)
 val BcWarning = Color(0xFFDEA143)
+val BcWarningForeground = Color(0xFF3B220D)
 val BcInfo = Color(0xFF4381AA)
 
 val BcBorder = Color(0xFFE2DDD9)

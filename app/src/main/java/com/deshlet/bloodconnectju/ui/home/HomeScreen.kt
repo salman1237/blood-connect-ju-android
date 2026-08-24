@@ -27,13 +27,16 @@ import com.deshlet.bloodconnectju.ui.auth.AuthViewModel
 import kotlinx.coroutines.launch
 
 /**
- * First proof-of-the-loop screen: confirms the token round-trips correctly
- * by calling the authenticated /api/v1/user endpoint. Everything else
- * (dashboard feed, requests, matching, ...) lands in later phases.
+ * Confirms the token round-trips correctly by calling the authenticated
+ * /api/v1/user endpoint, and is the jumping-off point to the rest of the
+ * app. No bottom-nav/drawer shell yet — that's its own later phase once
+ * there's more than one section to switch between (requests, donor
+ * directory, leaderboard, profile).
  */
 @Composable
 fun HomeScreen(
     onLoggedOut: () -> Unit,
+    onViewRequests: () -> Unit,
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
     var user by remember { mutableStateOf<UserDto?>(null) }
@@ -67,6 +70,10 @@ fun HomeScreen(
                     )
                 }
                 Spacer(Modifier.size(24.dp))
+                Button(onClick = onViewRequests) {
+                    Text("Blood requests")
+                }
+                Spacer(Modifier.size(12.dp))
                 Button(onClick = {
                     scope.launch {
                         authViewModel.logout()

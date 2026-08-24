@@ -14,20 +14,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.deshlet.bloodconnectju.ui.auth.AuthViewModel
 import com.deshlet.bloodconnectju.ui.auth.LoginScreen
 import com.deshlet.bloodconnectju.ui.auth.RegisterScreen
 import com.deshlet.bloodconnectju.ui.home.HomeScreen
 import com.deshlet.bloodconnectju.ui.onboarding.OnboardingScreen
+import com.deshlet.bloodconnectju.ui.requests.CreateRequestScreen
+import com.deshlet.bloodconnectju.ui.requests.MatchingDonorsScreen
+import com.deshlet.bloodconnectju.ui.requests.RequestDetailScreen
+import com.deshlet.bloodconnectju.ui.requests.RequestsScreen
 
 private object Routes {
     const val LOGIN = "login"
     const val REGISTER = "register"
     const val ONBOARDING = "onboarding"
     const val HOME = "home"
+    const val REQUESTS = "requests"
+    const val CREATE_REQUEST = "requests/create"
+    const val REQUEST_DETAIL = "requests/{id}"
+    const val MATCHING_DONORS = "requests/{id}/donors"
+
+    fun requestDetail(id: Int) = "requests/$id"
+    fun matchingDonors(id: Int) = "requests/$id/donors"
 }
 
 @Composable
@@ -97,6 +110,40 @@ fun BloodConnectNavHost(
         composable(Routes.HOME) {
             HomeScreen(
                 onLoggedOut = { navController.navigate(Routes.LOGIN) { popUpTo(0) } },
+                onViewRequests = { navController.navigate(Routes.REQUESTS) },
+            )
+        }
+        composable(Routes.REQUESTS) {
+            RequestsScreen(
+                onRequestClick = { id -> navController.navigate(Routes.requestDetail(id)) },
+                onCreateRequest = { navController.navigate(Routes.CREATE_REQUEST) },
+            )
+        }
+        composable(Routes.CREATE_REQUEST) {
+            CreateRequestScreen(
+                onCreated = { id ->
+                    navController.navigate(Routes.matchingDonors(id)) {
+                        popUpTo(Routes.REQUESTS)
+                    }
+                },
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = Routes.REQUEST_DETAIL,
+            arguments = listOf(navArgument("id") { type = NavType.IntType }),
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getInt("id") ?: return@composable
+            RequestDetailScreen(requestId = id, onBack = { navController.popBackStack() })
+        }
+        composable(
+            route = Routes.MATCHING_DONORS,
+            arguments = listOf(navArgument("id") { type = NavType.IntType }),
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getInt("id") ?: return@composable
+            MatchingDonorsScreen(
+                requestId = id,
+                onBack = { navController.navigate(Routes.REQUESTS) { popUpTo(Routes.REQUESTS) { inclusive = true } } },
             )
         }
     }
