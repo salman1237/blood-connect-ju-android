@@ -22,6 +22,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -53,6 +54,11 @@ private val genderOptions = listOf("male" to "Male", "female" to "Female", "othe
 @Composable
 fun RegisterScreen(
     onRegistered: () -> Unit,
+    // Separate from onRegistered: a Google sign-in from this screen might
+    // resolve to an *existing*, already-onboarded account (e.g. someone
+    // who first signed up via web with Google), unlike a brand-new
+    // email/password account, which never has a completed profile yet.
+    onGoogleSignedIn: (hasCompletedOnboarding: Boolean) -> Unit,
     onNavigateToLogin: () -> Unit,
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
@@ -63,6 +69,7 @@ fun RegisterScreen(
     var passwordConfirmation by rememberSaveable { mutableStateOf("") }
     var role by rememberSaveable { mutableStateOf("student") }
     var gender by rememberSaveable { mutableStateOf("male") }
+    var googleError by rememberSaveable { mutableStateOf<String?>(null) }
     var dateOfBirth by rememberSaveable { mutableStateOf("") }
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -94,6 +101,28 @@ fun RegisterScreen(
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
             ) {
                 Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    GoogleSignInButton(
+                        enabled = !uiState.isLoading,
+                        onResult = { result ->
+                            when (result) {
+                                is GoogleSignInResult.Success -> {
+                                    googleError = null
+                                    authViewModel.loginWithGoogle(result.idToken, onSuccess = onGoogleSignedIn)
+                                }
+                                is GoogleSignInResult.Failure -> googleError = result.message
+                                GoogleSignInResult.Cancelled -> Unit
+                            }
+                        },
+                    )
+                    googleError?.let { message ->
+                        Text(message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        HorizontalDivider(modifier = Modifier.weight(1f))
+                        Text("or", style = MaterialTheme.typography.bodySmall, color = BcMutedForeground)
+                        HorizontalDivider(modifier = Modifier.weight(1f))
+                    }
+
                     LabeledField("Name", name, { name = it }, uiState.fieldErrors["name"])
                     LabeledField("Email", email, { email = it }, uiState.fieldErrors["email"], keyboardType = KeyboardType.Email)
                     LabeledField("Password", password, { password = it }, uiState.fieldErrors["password"], isPassword = true)

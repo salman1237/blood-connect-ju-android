@@ -3,6 +3,7 @@ package com.deshlet.bloodconnectju.data
 import android.os.Build
 import com.deshlet.bloodconnectju.data.remote.ApiService
 import com.deshlet.bloodconnectju.data.remote.dto.AuthResponse
+import com.deshlet.bloodconnectju.data.remote.dto.GoogleLoginRequest
 import com.deshlet.bloodconnectju.data.remote.dto.LoginRequest
 import com.deshlet.bloodconnectju.data.remote.dto.RegisterRequest
 import com.deshlet.bloodconnectju.data.remote.dto.UserDto
@@ -54,6 +55,12 @@ class AuthRepository @Inject constructor(
     suspend fun login(email: String, password: String): AuthResult {
         val request = LoginRequest(email = email, password = password, device_name = deviceName())
         return runAuthCall { api.login(request) }
+    }
+
+    /** [idToken] comes from the on-device Credential Manager flow — see ui/auth/GoogleSignIn.kt. */
+    suspend fun loginWithGoogle(idToken: String): AuthResult {
+        val request = GoogleLoginRequest(id_token = idToken, device_name = deviceName())
+        return runAuthCall { api.loginWithGoogle(request) }
     }
 
     /** Best-effort server-side revoke — the local token is cleared either way. */

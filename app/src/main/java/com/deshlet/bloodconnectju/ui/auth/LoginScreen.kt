@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -59,6 +61,7 @@ fun LoginScreen(
     val uiState by authViewModel.uiState.collectAsState()
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
+    var googleError by rememberSaveable { mutableStateOf<String?>(null) }
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Column(
@@ -104,6 +107,28 @@ fun LoginScreen(
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
             ) {
                 Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    GoogleSignInButton(
+                        enabled = !uiState.isLoading,
+                        onResult = { result ->
+                            when (result) {
+                                is GoogleSignInResult.Success -> {
+                                    googleError = null
+                                    authViewModel.loginWithGoogle(result.idToken, onSuccess = onLoggedIn)
+                                }
+                                is GoogleSignInResult.Failure -> googleError = result.message
+                                GoogleSignInResult.Cancelled -> Unit
+                            }
+                        },
+                    )
+                    googleError?.let { message ->
+                        Text(message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        HorizontalDivider(modifier = Modifier.weight(1f))
+                        Text("or", style = MaterialTheme.typography.bodySmall, color = BcMutedForeground)
+                        HorizontalDivider(modifier = Modifier.weight(1f))
+                    }
+
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },

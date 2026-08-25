@@ -9,6 +9,7 @@ import com.deshlet.bloodconnectju.data.remote.dto.DonationsResponseDto
 import com.deshlet.bloodconnectju.data.remote.dto.DonorDetailDto
 import com.deshlet.bloodconnectju.data.remote.dto.DonorProfileUpdateRequest
 import com.deshlet.bloodconnectju.data.remote.dto.DonorSummaryDto
+import com.deshlet.bloodconnectju.data.remote.dto.GoogleLoginRequest
 import com.deshlet.bloodconnectju.data.remote.dto.LeaderboardEntryDto
 import com.deshlet.bloodconnectju.data.remote.dto.LoginRequest
 import com.deshlet.bloodconnectju.data.remote.dto.MessageResponse
@@ -40,6 +41,9 @@ interface ApiService {
 
     @POST("login")
     suspend fun login(@Body body: LoginRequest): Response<AuthResponse>
+
+    @POST("login/google")
+    suspend fun loginWithGoogle(@Body body: GoogleLoginRequest): Response<AuthResponse>
 
     @POST("logout")
     suspend fun logout(): Response<MessageResponse>

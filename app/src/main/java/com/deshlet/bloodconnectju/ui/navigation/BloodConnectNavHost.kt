@@ -110,6 +110,13 @@ fun BloodConnectNavHost(
                 // A brand-new account never has a donor profile yet, so this
                 // always goes to onboarding — no ambiguity to check.
                 onRegistered = { navController.navigate(Routes.ONBOARDING) { popUpTo(0) } },
+                // Google sign-in from this screen might resolve to an
+                // existing, already-onboarded account — same routing logic
+                // as LoginScreen's onLoggedIn, unlike onRegistered above.
+                onGoogleSignedIn = { hasCompletedOnboarding ->
+                    val target = if (hasCompletedOnboarding) Routes.HOME else Routes.ONBOARDING
+                    navController.navigate(target) { popUpTo(0) }
+                },
                 onNavigateToLogin = { navController.popBackStack() },
             )
         }

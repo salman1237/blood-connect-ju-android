@@ -49,6 +49,22 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun loginWithGoogle(idToken: String, onSuccess: (hasCompletedOnboarding: Boolean) -> Unit) {
+        viewModelScope.launch {
+            _uiState.value = AuthUiState(isLoading = true)
+            when (val result = authRepository.loginWithGoogle(idToken)) {
+                is AuthResult.Success -> {
+                    _uiState.value = AuthUiState()
+                    onSuccess(result.user.has_completed_onboarding)
+                }
+
+                is AuthResult.Failure -> {
+                    _uiState.value = AuthUiState(errorMessage = result.message, fieldErrors = result.fieldErrors)
+                }
+            }
+        }
+    }
+
     fun register(
         name: String,
         email: String,
