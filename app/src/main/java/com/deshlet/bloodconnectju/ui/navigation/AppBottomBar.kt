@@ -53,8 +53,18 @@ fun AppBottomBar(navController: NavHostController) {
                     )
                 },
                 label = { Text(item.label) },
+                // selectedTextColor has to be set explicitly too, not just
+                // selectedIconColor — Material3's own default for it
+                // resolves through this theme's secondary/secondaryContainer
+                // roles, which land close enough to BcAccent (the indicator
+                // pill behind the selected item) that the label reads as
+                // blank. Same root cause as the selected-FilterChip
+                // invisibility bug from the Profile phase — a Material3
+                // default color role that isn't actually tuned for this
+                // brand's palette.
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = BcAccentForeground,
+                    selectedTextColor = BcAccentForeground,
                     indicatorColor = BcAccent,
                 ),
             )

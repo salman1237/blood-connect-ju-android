@@ -44,6 +44,7 @@ import com.deshlet.bloodconnectju.data.remote.dto.DonorProfileUpdateRequest
 import com.deshlet.bloodconnectju.data.remote.dto.UserDto
 import com.deshlet.bloodconnectju.ui.components.GroupedDropdownField
 import com.deshlet.bloodconnectju.ui.components.SimpleDropdownField
+import com.deshlet.bloodconnectju.ui.components.UserAvatar
 import com.deshlet.bloodconnectju.ui.components.selectedChipColors
 import kotlinx.coroutines.launch
 
@@ -137,6 +138,16 @@ private fun AccountCard(user: UserDto, uiState: ProfileUiState, onSave: (String,
     Card {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("Account", style = MaterialTheme.typography.titleMedium)
+            // Display-only, matching web's x-user-avatar — a real photo
+            // when the account has one, initials otherwise. No upload/
+            // remove-photo action here yet: that's a web-only feature so
+            // far, the API has no avatar endpoint for the Android client
+            // to call (see the Laravel repo's Phase 27 note).
+            UserAvatar(
+                name = user.name,
+                avatarUrl = user.avatar_url,
+                modifier = Modifier.size(72.dp),
+            )
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },

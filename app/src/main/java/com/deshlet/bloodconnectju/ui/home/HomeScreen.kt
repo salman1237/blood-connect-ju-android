@@ -49,6 +49,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.deshlet.bloodconnectju.R
 import com.deshlet.bloodconnectju.data.remote.dto.UserDto
 import com.deshlet.bloodconnectju.ui.auth.AuthViewModel
+import com.deshlet.bloodconnectju.ui.components.UserAvatar
 import com.deshlet.bloodconnectju.ui.theme.BcAccent
 import com.deshlet.bloodconnectju.ui.theme.BcAccentForeground
 import com.deshlet.bloodconnectju.ui.theme.BcMutedForeground
@@ -165,7 +166,13 @@ private fun GreetingCard(user: UserDto) {
     ) {
         Column(Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                InitialsAvatar(name = user.name)
+                UserAvatar(
+                    name = user.name,
+                    avatarUrl = user.avatar_url,
+                    modifier = Modifier.size(52.dp),
+                    backgroundColor = Color.White.copy(alpha = 0.55f),
+                    contentColor = BcAccentForeground,
+                )
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         "Welcome back,",
@@ -215,19 +222,6 @@ private fun GreetingCard(user: UserDto) {
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun InitialsAvatar(name: String) {
-    val initial = name.trim().firstOrNull()?.uppercase() ?: "?"
-    Box(
-        modifier = Modifier
-            .size(52.dp)
-            .background(Color.White.copy(alpha = 0.55f), CircleShape),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(initial, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = BcAccentForeground)
     }
 }
 
