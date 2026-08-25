@@ -20,7 +20,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -54,7 +53,6 @@ private val bloodGroupOptions = listOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+
 
 @Composable
 fun ProfileScreen(
-    onBack: () -> Unit,
     onLoggedOut: () -> Unit,
     onAccountDeleted: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel(),
@@ -69,14 +67,10 @@ fun ProfileScreen(
     LaunchedEffect(Unit) { viewModel.refresh() }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Profile") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) { Text("←", style = MaterialTheme.typography.titleLarge) }
-                },
-            )
-        },
+        // No back arrow — this is one of the four bottom-tab roots
+        // (Home/Requests/Donors/Profile), reached by switching tabs rather
+        // than pushed onto a stack, so there's nothing to navigate back to.
+        topBar = { TopAppBar(title = { Text("Profile") }) },
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             val user = uiState.user

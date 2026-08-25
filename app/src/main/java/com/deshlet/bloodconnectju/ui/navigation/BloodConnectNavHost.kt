@@ -1,5 +1,10 @@
 package com.deshlet.bloodconnectju.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -34,27 +39,6 @@ import com.deshlet.bloodconnectju.ui.requests.MatchingDonorsScreen
 import com.deshlet.bloodconnectju.ui.requests.MyRequestsScreen
 import com.deshlet.bloodconnectju.ui.requests.RequestDetailScreen
 import com.deshlet.bloodconnectju.ui.requests.RequestsScreen
-
-private object Routes {
-    const val LOGIN = "login"
-    const val REGISTER = "register"
-    const val ONBOARDING = "onboarding"
-    const val HOME = "home"
-    const val REQUESTS = "requests"
-    const val MY_REQUESTS = "my-requests"
-    const val CREATE_REQUEST = "requests/create"
-    const val REQUEST_DETAIL = "requests/{id}"
-    const val MATCHING_DONORS = "requests/{id}/donors"
-    const val DONORS = "donors"
-    const val DONOR_DETAIL = "donors/{id}"
-    const val LEADERBOARD = "leaderboard"
-    const val PROFILE = "profile"
-    const val DONATIONS = "donations"
-
-    fun requestDetail(id: Int) = "requests/$id"
-    fun matchingDonors(id: Int) = "requests/$id/donors"
-    fun donorDetail(id: Int) = "donors/$id"
-}
 
 @Composable
 fun BloodConnectNavHost(
@@ -95,10 +79,20 @@ fun BloodConnectNavHost(
         return
     }
 
+    // A shared, tasteful default for every destination instead of the
+    // abrupt hard-cut the app had before — a subtle fade+slide reads as
+    // "smooth" without the cost/complexity of a bespoke transition per
+    // screen type (e.g. tab-switch vs. stack-push).
+    val slideFraction = { fullWidth: Int -> fullWidth / 8 }
+
     NavHost(
         navController = navController,
         startDestination = resolvedStart,
         modifier = modifier,
+        enterTransition = { fadeIn(tween(220)) + slideInHorizontally(tween(220), slideFraction) },
+        exitTransition = { fadeOut(tween(180)) },
+        popEnterTransition = { fadeIn(tween(220)) },
+        popExitTransition = { fadeOut(tween(180)) + slideOutHorizontally(tween(180), slideFraction) },
     ) {
         composable(Routes.LOGIN) {
             LoginScreen(
@@ -124,18 +118,14 @@ fun BloodConnectNavHost(
         }
         composable(Routes.HOME) {
             HomeScreen(
-                onLoggedOut = { navController.navigate(Routes.LOGIN) { popUpTo(0) } },
-                onViewRequests = { navController.navigate(Routes.REQUESTS) },
+                onCreateRequest = { navController.navigate(Routes.CREATE_REQUEST) },
                 onViewMyRequests = { navController.navigate(Routes.MY_REQUESTS) },
                 onViewDonationHistory = { navController.navigate(Routes.DONATIONS) },
-                onViewDonors = { navController.navigate(Routes.DONORS) },
                 onViewLeaderboard = { navController.navigate(Routes.LEADERBOARD) },
-                onViewProfile = { navController.navigate(Routes.PROFILE) },
             )
         }
         composable(Routes.PROFILE) {
             ProfileScreen(
-                onBack = { navController.popBackStack() },
                 onLoggedOut = { navController.navigate(Routes.LOGIN) { popUpTo(0) } },
                 onAccountDeleted = { navController.navigate(Routes.LOGIN) { popUpTo(0) } },
             )
@@ -146,7 +136,6 @@ fun BloodConnectNavHost(
         composable(Routes.DONORS) {
             DonorDirectoryScreen(
                 onDonorClick = { id -> navController.navigate(Routes.donorDetail(id)) },
-                onBack = { navController.popBackStack() },
             )
         }
         composable(

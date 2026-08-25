@@ -16,8 +16,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.deshlet.bloodconnectju.notifications.PushIntentExtras
+import com.deshlet.bloodconnectju.ui.navigation.AppBottomBar
 import com.deshlet.bloodconnectju.ui.navigation.BloodConnectNavHost
+import com.deshlet.bloodconnectju.ui.navigation.BottomNavItem
 import com.deshlet.bloodconnectju.ui.theme.BloodConnectJUTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -50,8 +54,21 @@ class MainActivity : ComponentActivity() {
                 // Zone's password confirm, Create Request's contact number,
                 // Register's whole form — sat directly under the keyboard
                 // with no way to scroll it into view.
-                Scaffold(modifier = Modifier.fillMaxSize().imePadding()) { innerPadding ->
+                val navController = rememberNavController()
+                val currentRoute by navController.currentBackStackEntryAsState()
+                val showBottomBar = BottomNavItem.entries.any { it.route == currentRoute?.destination?.route }
+
+                Scaffold(
+                    modifier = Modifier.fillMaxSize().imePadding(),
+                    // Only the four tab roots (Home/Requests/Donors/Profile)
+                    // get the bottom bar — everything else (auth, onboarding,
+                    // create request, any detail screen) is a focused task
+                    // that gets the full screen instead of permanent tab
+                    // chrome sitting underneath it.
+                    bottomBar = { if (showBottomBar) AppBottomBar(navController) },
+                ) { innerPadding ->
                     BloodConnectNavHost(
+                        navController = navController,
                         modifier = Modifier.fillMaxSize().padding(innerPadding),
                         pendingDeepLinkRequestId = pendingDeepLinkRequestId,
                         onDeepLinkConsumed = { pendingDeepLinkRequestId = null },

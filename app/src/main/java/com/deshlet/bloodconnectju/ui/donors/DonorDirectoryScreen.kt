@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -37,7 +36,6 @@ private val bloodGroups = listOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-
 @Composable
 fun DonorDirectoryScreen(
     onDonorClick: (Int) -> Unit,
-    onBack: () -> Unit,
     viewModel: DonorDirectoryViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -47,14 +45,8 @@ fun DonorDirectoryScreen(
     LaunchedEffect(Unit) { viewModel.refresh() }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Donors") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) { Text("←", style = MaterialTheme.typography.titleLarge) }
-                },
-            )
-        },
+        // No back arrow — one of the four bottom-tab roots, see ProfileScreen.
+        topBar = { TopAppBar(title = { Text("Donors") }) },
     ) { innerPadding ->
         Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             OutlinedTextField(
