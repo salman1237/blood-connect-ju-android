@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
@@ -39,7 +40,17 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             BloodConnectJUTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                // imePadding() here, once, at the root — rather than on each
+                // screen individually — is what actually makes the keyboard
+                // push content up instead of covering it. enableEdgeToEdge()
+                // above turns off the system's own window-resize-on-IME
+                // behavior (that's what windowSoftInputMode="adjustResize" in
+                // the manifest used to handle before edge-to-edge), so
+                // without this every screen's bottom-most field — Danger
+                // Zone's password confirm, Create Request's contact number,
+                // Register's whole form — sat directly under the keyboard
+                // with no way to scroll it into view.
+                Scaffold(modifier = Modifier.fillMaxSize().imePadding()) { innerPadding ->
                     BloodConnectNavHost(
                         modifier = Modifier.fillMaxSize().padding(innerPadding),
                         pendingDeepLinkRequestId = pendingDeepLinkRequestId,

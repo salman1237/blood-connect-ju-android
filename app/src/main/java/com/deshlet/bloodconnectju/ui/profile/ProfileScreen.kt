@@ -62,6 +62,12 @@ fun ProfileScreen(
     val uiState by viewModel.uiState.collectAsState()
     val scope = rememberCoroutineScope()
 
+    // Same reasoning as RequestsScreen — refetch every time this screen
+    // becomes visible again, not just the first time it's created. Safe
+    // for in-progress edits: AccountCard/DonorProfileCard's local field
+    // state is keyed on user.id, which doesn't change on a refresh.
+    LaunchedEffect(Unit) { viewModel.refresh() }
+
     Scaffold(
         topBar = {
             TopAppBar(

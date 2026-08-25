@@ -24,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -41,6 +42,16 @@ fun RequestsScreen(
     viewModel: RequestsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    // ViewModel.init{} only fires once per instance, and the instance
+    // survives while this destination sits lower in the back stack (e.g.
+    // behind Create Request or a request's detail page) — without this,
+    // coming back here after posting a request or acting on one showed
+    // stale data until the app was fully restarted. Re-running on every
+    // recomposition of this composable (which happens each time it becomes
+    // the visible destination again, not just on first creation) is what
+    // makes "go back and see the update" actually work.
+    LaunchedEffect(Unit) { viewModel.refresh() }
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Blood requests") }) },

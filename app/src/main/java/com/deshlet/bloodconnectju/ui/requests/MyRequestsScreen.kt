@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -35,6 +36,11 @@ fun MyRequestsScreen(
     viewModel: MyRequestsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    // Same reasoning as RequestsScreen — refetch every time this screen
+    // becomes visible again (e.g. after posting a request and navigating
+    // back), not just the first time it's created.
+    LaunchedEffect(Unit) { viewModel.refresh() }
 
     Scaffold(
         topBar = {
