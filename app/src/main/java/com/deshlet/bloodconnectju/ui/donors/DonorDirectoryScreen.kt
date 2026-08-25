@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.deshlet.bloodconnectju.ui.components.DonorRow
+import com.deshlet.bloodconnectju.ui.components.selectedChipColors
 
 private val bloodGroups = listOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-")
 
@@ -68,6 +69,7 @@ fun DonorDirectoryScreen(
                         selected = uiState.bloodGroupFilter == null,
                         onClick = { viewModel.setBloodGroupFilter(null) },
                         label = { Text("All") },
+                        colors = selectedChipColors(),
                     )
                 }
                 items(bloodGroups) { group ->
@@ -75,6 +77,7 @@ fun DonorDirectoryScreen(
                         selected = uiState.bloodGroupFilter == group,
                         onClick = { viewModel.setBloodGroupFilter(group) },
                         label = { Text(group) },
+                        colors = selectedChipColors(),
                     )
                 }
             }

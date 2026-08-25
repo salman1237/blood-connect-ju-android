@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.deshlet.bloodconnectju.ui.components.selectedChipColors
 
 private val bloodGroupOptions = listOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-")
 private val urgencyOptions = listOf("critical" to "Critical", "within_24h" to "Within 24h", "planned" to "Planned")
@@ -79,6 +80,7 @@ fun CreateRequestScreen(
                                 selected = bloodGroup == group,
                                 onClick = { bloodGroup = group },
                                 label = { Text(group) },
+                                colors = selectedChipColors(),
                                 modifier = Modifier.weight(1f),
                             )
                         }
@@ -123,7 +125,7 @@ fun CreateRequestScreen(
             Spacer(Modifier.size(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 urgencyOptions.forEach { (value, label) ->
-                    FilterChip(selected = urgency == value, onClick = { urgency = value }, label = { Text(label) })
+                    FilterChip(selected = urgency == value, onClick = { urgency = value }, label = { Text(label) }, colors = selectedChipColors())
                 }
             }
 

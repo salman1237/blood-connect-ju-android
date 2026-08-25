@@ -39,6 +39,7 @@ fun HomeScreen(
     onViewRequests: () -> Unit,
     onViewDonors: () -> Unit,
     onViewLeaderboard: () -> Unit,
+    onViewProfile: () -> Unit,
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
     var user by remember { mutableStateOf<UserDto?>(null) }
@@ -82,6 +83,10 @@ fun HomeScreen(
                 Spacer(Modifier.size(12.dp))
                 Button(onClick = onViewLeaderboard) {
                     Text("Leaderboard")
+                }
+                Spacer(Modifier.size(12.dp))
+                Button(onClick = onViewProfile) {
+                    Text("Profile")
                 }
                 Spacer(Modifier.size(12.dp))
                 Button(onClick = {

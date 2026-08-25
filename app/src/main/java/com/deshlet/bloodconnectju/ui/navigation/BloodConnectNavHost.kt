@@ -27,6 +27,7 @@ import com.deshlet.bloodconnectju.ui.donors.DonorDirectoryScreen
 import com.deshlet.bloodconnectju.ui.home.HomeScreen
 import com.deshlet.bloodconnectju.ui.leaderboard.LeaderboardScreen
 import com.deshlet.bloodconnectju.ui.onboarding.OnboardingScreen
+import com.deshlet.bloodconnectju.ui.profile.ProfileScreen
 import com.deshlet.bloodconnectju.ui.requests.CreateRequestScreen
 import com.deshlet.bloodconnectju.ui.requests.MatchingDonorsScreen
 import com.deshlet.bloodconnectju.ui.requests.RequestDetailScreen
@@ -44,6 +45,7 @@ private object Routes {
     const val DONORS = "donors"
     const val DONOR_DETAIL = "donors/{id}"
     const val LEADERBOARD = "leaderboard"
+    const val PROFILE = "profile"
 
     fun requestDetail(id: Int) = "requests/$id"
     fun matchingDonors(id: Int) = "requests/$id/donors"
@@ -122,6 +124,14 @@ fun BloodConnectNavHost(
                 onViewRequests = { navController.navigate(Routes.REQUESTS) },
                 onViewDonors = { navController.navigate(Routes.DONORS) },
                 onViewLeaderboard = { navController.navigate(Routes.LEADERBOARD) },
+                onViewProfile = { navController.navigate(Routes.PROFILE) },
+            )
+        }
+        composable(Routes.PROFILE) {
+            ProfileScreen(
+                onBack = { navController.popBackStack() },
+                onLoggedOut = { navController.navigate(Routes.LOGIN) { popUpTo(0) } },
+                onAccountDeleted = { navController.navigate(Routes.LOGIN) { popUpTo(0) } },
             )
         }
         composable(Routes.LEADERBOARD) {

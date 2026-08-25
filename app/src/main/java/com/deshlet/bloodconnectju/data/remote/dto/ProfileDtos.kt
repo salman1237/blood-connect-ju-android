@@ -31,3 +31,16 @@ data class DonorProfileUpdateRequest(
     val is_available: Boolean = true,
     val last_donation_date: String? = null,
 )
+
+/** PATCH /api/v1/profile body — mirrors App\Http\Requests\ProfileUpdateRequest (account-level fields, not donor-specific). */
+@Serializable
+data class AccountUpdateRequest(
+    val name: String,
+    val email: String,
+)
+
+/** DELETE /api/v1/profile body — password-confirmed account deletion. */
+@Serializable
+data class DeleteAccountRequest(
+    val password: String,
+)

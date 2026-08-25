@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.deshlet.bloodconnectju.ui.components.GroupedDropdownField
 import com.deshlet.bloodconnectju.ui.components.SimpleDropdownField
+import com.deshlet.bloodconnectju.ui.components.selectedChipColors
 
 private val roleOptions = listOf("student" to "Student", "staff" to "Staff", "faculty" to "Teacher")
 private val genderOptions = listOf("male" to "Male", "female" to "Female", "other" to "Other")
@@ -140,6 +141,7 @@ fun OnboardingScreen(
                                     selected = bloodGroup == group,
                                     onClick = { bloodGroup = group },
                                     label = { Text(group) },
+                                    colors = selectedChipColors(),
                                     modifier = Modifier.weight(1f),
                                 )
                             }
@@ -159,7 +161,7 @@ fun OnboardingScreen(
                         Spacer(Modifier.size(4.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             roleOptions.forEach { (value, label) ->
-                                FilterChip(selected = role == value, onClick = { role = value }, label = { Text(label) })
+                                FilterChip(selected = role == value, onClick = { role = value }, label = { Text(label) }, colors = selectedChipColors())
                             }
                         }
                     }
@@ -168,7 +170,7 @@ fun OnboardingScreen(
                         Spacer(Modifier.size(4.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             genderOptions.forEach { (value, label) ->
-                                FilterChip(selected = gender == value, onClick = { gender = value }, label = { Text(label) })
+                                FilterChip(selected = gender == value, onClick = { gender = value }, label = { Text(label) }, colors = selectedChipColors())
                             }
                         }
                     }

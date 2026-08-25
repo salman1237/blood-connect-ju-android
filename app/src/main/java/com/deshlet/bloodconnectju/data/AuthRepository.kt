@@ -67,6 +67,14 @@ class AuthRepository @Inject constructor(
 
     suspend fun me(): UserDto? = runCatching { api.me() }.getOrNull()?.takeIf { it.isSuccessful }?.body()
 
+    /**
+     * Clears the stored token without calling the server — for when the
+     * account (and its token) is already gone server-side, e.g. right
+     * after a successful account deletion, where a `logout()`-style
+     * server call would just 401 against a user that no longer exists.
+     */
+    suspend fun forgetLocalSession() = tokenStore.clear()
+
     private suspend fun runAuthCall(call: suspend () -> Response<AuthResponse>): AuthResult {
         return try {
             val response = call()
