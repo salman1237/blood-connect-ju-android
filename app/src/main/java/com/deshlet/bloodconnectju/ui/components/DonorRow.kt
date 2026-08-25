@@ -37,6 +37,12 @@ private val WhatsAppGreen = Color(0xFF25D366)
  * their own; only whether the row itself is clickable (directory: yes, to
  * open the full profile; matching donors: no, WhatsApp is the only action)
  * differs between the two call sites.
+ *
+ * Mirrors web's matching-donors row exactly: a real photo (or initials)
+ * via the shared `UserAvatar`, plus a separate small blood-group badge —
+ * this used to render the blood-group letter *as* the avatar circle, which
+ * is why photos never showed up here even after avatar_url started coming
+ * back from the API.
  */
 @Composable
 fun DonorRow(donor: DonorSummaryDto, onClick: (() -> Unit)? = null) {
@@ -48,12 +54,7 @@ fun DonorRow(donor: DonorSummaryDto, onClick: (() -> Unit)? = null) {
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(
-                modifier = Modifier.size(44.dp).background(BcAccent, CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(donor.blood_group, color = BcAccentForeground, style = MaterialTheme.typography.labelLarge)
-            }
+            UserAvatar(name = donor.name, avatarUrl = donor.avatar_url, modifier = Modifier.size(44.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(donor.name, style = MaterialTheme.typography.titleSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Text(
@@ -63,6 +64,12 @@ fun DonorRow(donor: DonorSummaryDto, onClick: (() -> Unit)? = null) {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+            }
+            Box(
+                modifier = Modifier.size(30.dp).background(BcAccent, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(donor.blood_group, color = BcAccentForeground, style = MaterialTheme.typography.labelSmall)
             }
             if (donor.whatsapp_url != null) {
                 Box(

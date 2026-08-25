@@ -45,6 +45,7 @@ import com.deshlet.bloodconnectju.R
 import com.deshlet.bloodconnectju.data.remote.dto.BadgeDto
 import com.deshlet.bloodconnectju.data.remote.dto.DonationHistoryEntryDto
 import com.deshlet.bloodconnectju.data.remote.dto.DonorDetailDto
+import com.deshlet.bloodconnectju.ui.components.UserAvatar
 import com.deshlet.bloodconnectju.ui.theme.BcAccent
 import com.deshlet.bloodconnectju.ui.theme.BcAccentForeground
 import com.deshlet.bloodconnectju.ui.theme.BcMuted
@@ -120,13 +121,14 @@ private fun HeaderCard(donor: DonorDetailDto) {
 
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
+            // Mirrors web's donors/show.blade.php: a real photo (or
+            // initials) via the shared UserAvatar, plus the blood group as
+            // its own badge on the right — this card used to render the
+            // blood-group letter *as* the avatar circle instead of the
+            // account's actual photo, even though avatar_url was already
+            // in DonorDetailDto.
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Box(
-                    modifier = Modifier.size(56.dp).background(BcAccent, CircleShape),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(donor.donor_profile.blood_group, color = BcAccentForeground, style = MaterialTheme.typography.titleMedium)
-                }
+                UserAvatar(name = donor.name, avatarUrl = donor.avatar_url, modifier = Modifier.size(56.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(donor.name, style = MaterialTheme.typography.titleLarge)
                     Text(
@@ -134,6 +136,12 @@ private fun HeaderCard(donor: DonorDetailDto) {
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                }
+                Box(
+                    modifier = Modifier.size(48.dp).background(BcAccent, CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(donor.donor_profile.blood_group, color = BcAccentForeground, style = MaterialTheme.typography.titleMedium)
                 }
             }
 
