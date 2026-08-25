@@ -13,10 +13,12 @@ import com.deshlet.bloodconnectju.data.remote.dto.LeaderboardEntryDto
 import com.deshlet.bloodconnectju.data.remote.dto.LoginRequest
 import com.deshlet.bloodconnectju.data.remote.dto.MessageResponse
 import com.deshlet.bloodconnectju.data.remote.dto.MetaResponse
+import com.deshlet.bloodconnectju.data.remote.dto.NotificationDto
 import com.deshlet.bloodconnectju.data.remote.dto.RegisterPushTokenRequest
 import com.deshlet.bloodconnectju.data.remote.dto.RegisterRequest
 import com.deshlet.bloodconnectju.data.remote.dto.RequestStatsDto
 import com.deshlet.bloodconnectju.data.remote.dto.UnregisterPushTokenRequest
+import com.deshlet.bloodconnectju.data.remote.dto.UpdateNotificationSettingsRequest
 import com.deshlet.bloodconnectju.data.remote.dto.UserDto
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -128,4 +130,16 @@ interface ApiService {
 
     @GET("donations")
     suspend fun getDonations(): Response<DonationsResponseDto>
+
+    @GET("notifications")
+    suspend fun listNotifications(): Response<List<NotificationDto>>
+
+    @PATCH("notifications/{id}/read")
+    suspend fun markNotificationRead(@Path("id") id: String): Response<Unit>
+
+    @PATCH("notifications/read-all")
+    suspend fun markAllNotificationsRead(): Response<Unit>
+
+    @PATCH("settings/notifications")
+    suspend fun updateNotificationSettings(@Body body: UpdateNotificationSettingsRequest): Response<UserDto>
 }

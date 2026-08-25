@@ -23,6 +23,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Inbox
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -73,6 +75,8 @@ fun HomeScreen(
     onViewMyRequests: () -> Unit,
     onViewDonationHistory: () -> Unit,
     onViewLeaderboard: () -> Unit,
+    onViewNotifications: () -> Unit,
+    onViewSettings: () -> Unit,
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
     var user by remember { mutableStateOf<UserDto?>(null) }
@@ -126,6 +130,21 @@ fun HomeScreen(
                 icon = Icons.Filled.EmojiEvents,
                 label = "Leaderboard",
                 onClick = onViewLeaderboard,
+                modifier = Modifier.weight(1f),
+            )
+        }
+        Spacer(Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            QuickActionCard(
+                icon = Icons.Filled.Notifications,
+                label = "Notifications",
+                onClick = onViewNotifications,
+                modifier = Modifier.weight(1f),
+            )
+            QuickActionCard(
+                icon = Icons.Filled.Settings,
+                label = "Settings",
+                onClick = onViewSettings,
                 modifier = Modifier.weight(1f),
             )
         }

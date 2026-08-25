@@ -32,6 +32,7 @@ import com.deshlet.bloodconnectju.ui.donors.DonorDetailScreen
 import com.deshlet.bloodconnectju.ui.donors.DonorDirectoryScreen
 import com.deshlet.bloodconnectju.ui.home.HomeScreen
 import com.deshlet.bloodconnectju.ui.leaderboard.LeaderboardScreen
+import com.deshlet.bloodconnectju.ui.notifications.NotificationsScreen
 import com.deshlet.bloodconnectju.ui.onboarding.OnboardingScreen
 import com.deshlet.bloodconnectju.ui.profile.ProfileScreen
 import com.deshlet.bloodconnectju.ui.requests.CreateRequestScreen
@@ -39,6 +40,7 @@ import com.deshlet.bloodconnectju.ui.requests.MatchingDonorsScreen
 import com.deshlet.bloodconnectju.ui.requests.MyRequestsScreen
 import com.deshlet.bloodconnectju.ui.requests.RequestDetailScreen
 import com.deshlet.bloodconnectju.ui.requests.RequestsScreen
+import com.deshlet.bloodconnectju.ui.settings.SettingsScreen
 
 @Composable
 fun BloodConnectNavHost(
@@ -122,6 +124,8 @@ fun BloodConnectNavHost(
                 onViewMyRequests = { navController.navigate(Routes.MY_REQUESTS) },
                 onViewDonationHistory = { navController.navigate(Routes.DONATIONS) },
                 onViewLeaderboard = { navController.navigate(Routes.LEADERBOARD) },
+                onViewNotifications = { navController.navigate(Routes.NOTIFICATIONS) },
+                onViewSettings = { navController.navigate(Routes.SETTINGS) },
             )
         }
         composable(Routes.PROFILE) {
@@ -160,6 +164,18 @@ fun BloodConnectNavHost(
         }
         composable(Routes.DONATIONS) {
             DonationHistoryScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.NOTIFICATIONS) {
+            NotificationsScreen(
+                onBack = { navController.popBackStack() },
+                onOpenRequest = { id -> navController.navigate(Routes.requestDetail(id)) },
+            )
+        }
+        composable(Routes.SETTINGS) {
+            SettingsScreen(
+                onLoggedOut = { navController.navigate(Routes.LOGIN) { popUpTo(0) } },
+                onBack = { navController.popBackStack() },
+            )
         }
         composable(Routes.CREATE_REQUEST) {
             CreateRequestScreen(

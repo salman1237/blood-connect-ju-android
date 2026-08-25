@@ -7,6 +7,7 @@ import com.deshlet.bloodconnectju.data.remote.dto.AccountUpdateRequest
 import com.deshlet.bloodconnectju.data.remote.dto.DeleteAccountRequest
 import com.deshlet.bloodconnectju.data.remote.dto.DonorProfileUpdateRequest
 import com.deshlet.bloodconnectju.data.remote.dto.MetaResponse
+import com.deshlet.bloodconnectju.data.remote.dto.UpdateNotificationSettingsRequest
 import com.deshlet.bloodconnectju.data.remote.dto.UserDto
 import com.deshlet.bloodconnectju.data.remote.parseApiError
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -43,6 +44,10 @@ class ProfileRepository @Inject constructor(
 
     suspend fun updateAccount(name: String, email: String): ProfileResult =
         runProfileCall { api.updateAccount(AccountUpdateRequest(name = name, email = email)) }
+
+    /** Mirrors web's SettingsController::updateNotifications() — just the email-notifications toggle. */
+    suspend fun updateNotificationSettings(enabled: Boolean): ProfileResult =
+        runProfileCall { api.updateNotificationSettings(UpdateNotificationSettingsRequest(email_notifications_enabled = enabled)) }
 
     /**
      * Mirrors web's upload-photo form (image, up to 4MB, validated

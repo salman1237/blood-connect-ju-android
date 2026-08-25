@@ -16,6 +16,8 @@ object Routes {
     const val LEADERBOARD = "leaderboard"
     const val PROFILE = "profile"
     const val DONATIONS = "donations"
+    const val NOTIFICATIONS = "notifications"
+    const val SETTINGS = "settings"
 
     fun requestDetail(id: Int) = "requests/$id"
     fun matchingDonors(id: Int) = "requests/$id/donors"

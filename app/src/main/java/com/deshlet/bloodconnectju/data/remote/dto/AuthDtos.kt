@@ -57,6 +57,7 @@ data class UserDto(
     val phone_has_whatsapp: Boolean? = null,
     val whatsapp_url: String? = null,
     val avatar_url: String? = null,
+    val email_notifications_enabled: Boolean? = null,
     val is_active: Boolean,
     val is_admin: Boolean,
     val is_verifier: Boolean,
