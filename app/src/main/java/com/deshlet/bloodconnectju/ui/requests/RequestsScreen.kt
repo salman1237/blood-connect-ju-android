@@ -2,6 +2,7 @@
 
 package com.deshlet.bloodconnectju.ui.requests
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,10 +16,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Bloodtype
+import androidx.compose.material.icons.filled.Groups
+import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,9 +37,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.deshlet.bloodconnectju.ui.components.selectedChipColors
+import com.deshlet.bloodconnectju.ui.theme.BcAccent
+import com.deshlet.bloodconnectju.ui.theme.BcAccentForeground
 
 private val bloodGroups = listOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-")
 
@@ -57,7 +69,7 @@ fun RequestsScreen(
         topBar = { TopAppBar(title = { Text("Blood requests") }) },
         floatingActionButton = {
             FloatingActionButton(onClick = onCreateRequest) {
-                Text("+", style = MaterialTheme.typography.headlineSmall)
+                Icon(Icons.Filled.Add, contentDescription = "Post a blood request")
             }
         },
     ) { innerPadding ->
@@ -67,9 +79,9 @@ fun RequestsScreen(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    StatTile("Active", stats.active.toString(), Modifier.weight(1f))
-                    StatTile("Critical", stats.critical.toString(), Modifier.weight(1f))
-                    StatTile("Donors", stats.registered_donors.toString(), Modifier.weight(1f))
+                    StatTile("Active", stats.active.toString(), Icons.Filled.Bloodtype, Modifier.weight(1f))
+                    StatTile("Critical", stats.critical.toString(), Icons.Filled.PriorityHigh, Modifier.weight(1f))
+                    StatTile("Donors", stats.registered_donors.toString(), Icons.Filled.Groups, Modifier.weight(1f))
                 }
             }
 
@@ -122,11 +134,18 @@ fun RequestsScreen(
 }
 
 @Composable
-private fun StatTile(label: String, value: String, modifier: Modifier = Modifier) {
+private fun StatTile(label: String, value: String, icon: ImageVector, modifier: Modifier = Modifier) {
     Card(modifier = modifier) {
         Column(modifier = Modifier.padding(12.dp)) {
+            Box(
+                modifier = Modifier.size(28.dp).background(BcAccent, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(icon, contentDescription = null, tint = BcAccentForeground, modifier = Modifier.size(15.dp))
+            }
+            Spacer(Modifier.size(8.dp))
+            Text(value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(value, style = MaterialTheme.typography.titleLarge)
         }
     }
 }
