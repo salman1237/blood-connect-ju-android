@@ -175,9 +175,20 @@ fun BloodConnectNavHost(
         composable(Routes.CREATE_REQUEST) {
             CreateRequestScreen(
                 onCreated = { id ->
-                    navController.navigate(Routes.matchingDonors(id)) {
-                        popUpTo(Routes.REQUESTS)
-                    }
+                    // Pop CreateRequest off before pushing MatchingDonors,
+                    // rather than popUpTo(Routes.REQUESTS) — this screen is
+                    // reachable from both the feed and My Requests, and
+                    // popUpTo a route that isn't actually in the current
+                    // stack (e.g. arriving via My Requests, which never
+                    // pushed a REQUESTS entry) silently does nothing,
+                    // leaving CreateRequest sitting in the stack under
+                    // MatchingDonors — so "back" from there would show the
+                    // create form again instead of returning to wherever the
+                    // user actually started. Popping unconditionally leaves
+                    // MatchingDonorsScreen's own plain popBackStack() onBack
+                    // correct no matter which screen led here.
+                    navController.popBackStack()
+                    navController.navigate(Routes.matchingDonors(id))
                 },
                 onBack = { navController.popBackStack() },
             )
@@ -187,7 +198,11 @@ fun BloodConnectNavHost(
             arguments = listOf(navArgument("id") { type = NavType.IntType }),
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getInt("id") ?: return@composable
-            RequestDetailScreen(requestId = id, onBack = { navController.popBackStack() })
+            RequestDetailScreen(
+                requestId = id,
+                onBack = { navController.popBackStack() },
+                onViewMatchingDonors = { requestId -> navController.navigate(Routes.matchingDonors(requestId)) },
+            )
         }
         composable(
             route = Routes.MATCHING_DONORS,
@@ -196,7 +211,14 @@ fun BloodConnectNavHost(
             val id = backStackEntry.arguments?.getInt("id") ?: return@composable
             MatchingDonorsScreen(
                 requestId = id,
-                onBack = { navController.navigate(Routes.REQUESTS) { popUpTo(Routes.REQUESTS) { inclusive = true } } },
+                // A plain pop rather than a hardcoded "reset to the feed" —
+                // this screen is now reachable both right after creating a
+                // request (where the back stack already resolves to the feed
+                // underneath it) and from a request's own detail page (where
+                // it should return to that detail page, not jump away from
+                // it), so it needs to go back to wherever it was actually
+                // opened from rather than assuming one specific origin.
+                onBack = { navController.popBackStack() },
             )
         }
     }

@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +40,7 @@ import com.deshlet.bloodconnectju.ui.components.UrgencyBadge
 fun RequestDetailScreen(
     requestId: Int,
     onBack: () -> Unit,
+    onViewMatchingDonors: (Int) -> Unit,
     viewModel: RequestDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -131,6 +133,15 @@ fun RequestDetailScreen(
                     uiState.errorMessage?.let { message ->
                         Spacer(Modifier.size(8.dp))
                         Text(message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                    }
+
+                    // Always visible, same as web's requests/show.blade.php — not
+                    // gated on can_respond/can_fulfill, and not just a one-time
+                    // thing shown right after creating the request. Previously
+                    // this screen had no way back into matching donors at all
+                    // once you navigated away from the post-create screen.
+                    TextButton(onClick = { onViewMatchingDonors(request.id) }, modifier = Modifier.padding(top = 4.dp)) {
+                        Text("See available matching donors", style = MaterialTheme.typography.labelMedium)
                     }
 
                     Spacer(Modifier.size(20.dp))
