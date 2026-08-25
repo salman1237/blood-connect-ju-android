@@ -28,6 +28,9 @@ class RequestRepository @Inject constructor(
     suspend fun stats(): RequestStatsDto? =
         runCatching { api.requestStats() }.getOrNull()?.takeIf { it.isSuccessful }?.body()
 
+    suspend fun listMine(): List<BloodRequestDto>? =
+        runCatching { api.listMyRequests() }.getOrNull()?.takeIf { it.isSuccessful }?.body()
+
     suspend fun get(id: Int): BloodRequestDto? =
         runCatching { api.getRequest(id) }.getOrNull()?.takeIf { it.isSuccessful }?.body()
 

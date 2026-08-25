@@ -5,6 +5,7 @@ import com.deshlet.bloodconnectju.data.remote.dto.AuthResponse
 import com.deshlet.bloodconnectju.data.remote.dto.BloodRequestDto
 import com.deshlet.bloodconnectju.data.remote.dto.CreateRequestBody
 import com.deshlet.bloodconnectju.data.remote.dto.DeleteAccountRequest
+import com.deshlet.bloodconnectju.data.remote.dto.DonationsResponseDto
 import com.deshlet.bloodconnectju.data.remote.dto.DonorDetailDto
 import com.deshlet.bloodconnectju.data.remote.dto.DonorProfileUpdateRequest
 import com.deshlet.bloodconnectju.data.remote.dto.DonorSummaryDto
@@ -66,6 +67,9 @@ interface ApiService {
     @GET("requests/stats")
     suspend fun requestStats(): Response<RequestStatsDto>
 
+    @GET("requests/mine")
+    suspend fun listMyRequests(): Response<List<BloodRequestDto>>
+
     @POST("requests")
     suspend fun createRequest(@Body body: CreateRequestBody): Response<BloodRequestDto>
 
@@ -110,4 +114,7 @@ interface ApiService {
 
     @GET("leaderboard")
     suspend fun getLeaderboard(): Response<List<LeaderboardEntryDto>>
+
+    @GET("donations")
+    suspend fun getDonations(): Response<DonationsResponseDto>
 }

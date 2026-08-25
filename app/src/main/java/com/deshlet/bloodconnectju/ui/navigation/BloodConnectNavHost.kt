@@ -22,6 +22,7 @@ import androidx.navigation.navArgument
 import com.deshlet.bloodconnectju.ui.auth.AuthViewModel
 import com.deshlet.bloodconnectju.ui.auth.LoginScreen
 import com.deshlet.bloodconnectju.ui.auth.RegisterScreen
+import com.deshlet.bloodconnectju.ui.donations.DonationHistoryScreen
 import com.deshlet.bloodconnectju.ui.donors.DonorDetailScreen
 import com.deshlet.bloodconnectju.ui.donors.DonorDirectoryScreen
 import com.deshlet.bloodconnectju.ui.home.HomeScreen
@@ -30,6 +31,7 @@ import com.deshlet.bloodconnectju.ui.onboarding.OnboardingScreen
 import com.deshlet.bloodconnectju.ui.profile.ProfileScreen
 import com.deshlet.bloodconnectju.ui.requests.CreateRequestScreen
 import com.deshlet.bloodconnectju.ui.requests.MatchingDonorsScreen
+import com.deshlet.bloodconnectju.ui.requests.MyRequestsScreen
 import com.deshlet.bloodconnectju.ui.requests.RequestDetailScreen
 import com.deshlet.bloodconnectju.ui.requests.RequestsScreen
 
@@ -39,6 +41,7 @@ private object Routes {
     const val ONBOARDING = "onboarding"
     const val HOME = "home"
     const val REQUESTS = "requests"
+    const val MY_REQUESTS = "my-requests"
     const val CREATE_REQUEST = "requests/create"
     const val REQUEST_DETAIL = "requests/{id}"
     const val MATCHING_DONORS = "requests/{id}/donors"
@@ -46,6 +49,7 @@ private object Routes {
     const val DONOR_DETAIL = "donors/{id}"
     const val LEADERBOARD = "leaderboard"
     const val PROFILE = "profile"
+    const val DONATIONS = "donations"
 
     fun requestDetail(id: Int) = "requests/$id"
     fun matchingDonors(id: Int) = "requests/$id/donors"
@@ -122,6 +126,8 @@ fun BloodConnectNavHost(
             HomeScreen(
                 onLoggedOut = { navController.navigate(Routes.LOGIN) { popUpTo(0) } },
                 onViewRequests = { navController.navigate(Routes.REQUESTS) },
+                onViewMyRequests = { navController.navigate(Routes.MY_REQUESTS) },
+                onViewDonationHistory = { navController.navigate(Routes.DONATIONS) },
                 onViewDonors = { navController.navigate(Routes.DONORS) },
                 onViewLeaderboard = { navController.navigate(Routes.LEADERBOARD) },
                 onViewProfile = { navController.navigate(Routes.PROFILE) },
@@ -155,6 +161,16 @@ fun BloodConnectNavHost(
                 onRequestClick = { id -> navController.navigate(Routes.requestDetail(id)) },
                 onCreateRequest = { navController.navigate(Routes.CREATE_REQUEST) },
             )
+        }
+        composable(Routes.MY_REQUESTS) {
+            MyRequestsScreen(
+                onRequestClick = { id -> navController.navigate(Routes.requestDetail(id)) },
+                onCreateRequest = { navController.navigate(Routes.CREATE_REQUEST) },
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(Routes.DONATIONS) {
+            DonationHistoryScreen(onBack = { navController.popBackStack() })
         }
         composable(Routes.CREATE_REQUEST) {
             CreateRequestScreen(

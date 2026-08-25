@@ -37,6 +37,8 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     onLoggedOut: () -> Unit,
     onViewRequests: () -> Unit,
+    onViewMyRequests: () -> Unit,
+    onViewDonationHistory: () -> Unit,
     onViewDonors: () -> Unit,
     onViewLeaderboard: () -> Unit,
     onViewProfile: () -> Unit,
@@ -75,6 +77,14 @@ fun HomeScreen(
                 Spacer(Modifier.size(24.dp))
                 Button(onClick = onViewRequests) {
                     Text("Blood requests")
+                }
+                Spacer(Modifier.size(12.dp))
+                Button(onClick = onViewMyRequests) {
+                    Text("My requests")
+                }
+                Spacer(Modifier.size(12.dp))
+                Button(onClick = onViewDonationHistory) {
+                    Text("Donation history")
                 }
                 Spacer(Modifier.size(12.dp))
                 Button(onClick = onViewDonors) {
