@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,8 +20,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -32,10 +35,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.deshlet.bloodconnectju.R
 import com.deshlet.bloodconnectju.data.remote.dto.BadgeDto
 import com.deshlet.bloodconnectju.data.remote.dto.DonationHistoryEntryDto
 import com.deshlet.bloodconnectju.data.remote.dto.DonorDetailDto
@@ -46,6 +52,9 @@ import com.deshlet.bloodconnectju.ui.theme.BcMutedForeground
 import com.deshlet.bloodconnectju.ui.theme.BcSuccess
 import com.deshlet.bloodconnectju.ui.theme.BcWarning
 import com.deshlet.bloodconnectju.ui.theme.BcWarningForeground
+
+/** WhatsApp's own brand green — a one-off, same as the web app's bg-[#25D366], not a design-system token. */
+private val WhatsAppGreen = Color(0xFF25D366)
 
 private val roleLabels = mapOf(
     "student" to "Student",
@@ -153,8 +162,15 @@ private fun HeaderCard(donor: DonorDetailDto) {
             if (donor.whatsapp_url != null) {
                 Button(
                     onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, donor.whatsapp_url.toUri())) },
+                    colors = ButtonDefaults.buttonColors(containerColor = WhatsAppGreen, contentColor = Color.White),
                     modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
                 ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_whatsapp),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Spacer(Modifier.size(8.dp))
                     Text("Message on WhatsApp")
                 }
             }

@@ -10,20 +10,26 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import com.deshlet.bloodconnectju.R
 import com.deshlet.bloodconnectju.data.remote.dto.DonorSummaryDto
 import com.deshlet.bloodconnectju.ui.theme.BcAccent
 import com.deshlet.bloodconnectju.ui.theme.BcAccentForeground
+
+/** WhatsApp's own brand green — a one-off, same as the web app's bg-[#25D366], not a design-system token. */
+private val WhatsAppGreen = Color(0xFF25D366)
 
 /**
  * A donor as they appear in a list — matching donors (Phase 3) and the
@@ -59,8 +65,19 @@ fun DonorRow(donor: DonorSummaryDto, onClick: (() -> Unit)? = null) {
                 )
             }
             if (donor.whatsapp_url != null) {
-                Button(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, donor.whatsapp_url.toUri())) }) {
-                    Text("WhatsApp")
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .background(WhatsAppGreen, CircleShape)
+                        .clickable { context.startActivity(Intent(Intent.ACTION_VIEW, donor.whatsapp_url.toUri())) },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_whatsapp),
+                        contentDescription = "Message ${donor.name} on WhatsApp",
+                        tint = Color.White,
+                        modifier = Modifier.size(16.dp),
+                    )
                 }
             }
         }
