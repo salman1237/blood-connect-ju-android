@@ -3,6 +3,7 @@ package com.deshlet.bloodconnectju.data.remote
 import com.deshlet.bloodconnectju.data.remote.dto.AuthResponse
 import com.deshlet.bloodconnectju.data.remote.dto.BloodRequestDto
 import com.deshlet.bloodconnectju.data.remote.dto.CreateRequestBody
+import com.deshlet.bloodconnectju.data.remote.dto.DonorDetailDto
 import com.deshlet.bloodconnectju.data.remote.dto.DonorProfileUpdateRequest
 import com.deshlet.bloodconnectju.data.remote.dto.DonorSummaryDto
 import com.deshlet.bloodconnectju.data.remote.dto.LoginRequest
@@ -77,4 +78,14 @@ interface ApiService {
 
     @DELETE("push-tokens")
     suspend fun unregisterPushToken(@Body body: UnregisterPushTokenRequest): Response<Unit>
+
+    @GET("donors")
+    suspend fun listDonors(
+        @Query("search") search: String? = null,
+        @Query("blood_group") bloodGroup: String? = null,
+        @Query("hall") hall: String? = null,
+    ): Response<List<DonorSummaryDto>>
+
+    @GET("donors/{id}")
+    suspend fun getDonor(@Path("id") id: Int): Response<DonorDetailDto>
 }

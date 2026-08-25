@@ -37,6 +37,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     onLoggedOut: () -> Unit,
     onViewRequests: () -> Unit,
+    onViewDonors: () -> Unit,
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
     var user by remember { mutableStateOf<UserDto?>(null) }
@@ -72,6 +73,10 @@ fun HomeScreen(
                 Spacer(Modifier.size(24.dp))
                 Button(onClick = onViewRequests) {
                     Text("Blood requests")
+                }
+                Spacer(Modifier.size(12.dp))
+                Button(onClick = onViewDonors) {
+                    Text("Donors")
                 }
                 Spacer(Modifier.size(12.dp))
                 Button(onClick = {

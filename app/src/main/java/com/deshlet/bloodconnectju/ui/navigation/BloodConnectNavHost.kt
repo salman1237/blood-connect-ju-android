@@ -22,6 +22,8 @@ import androidx.navigation.navArgument
 import com.deshlet.bloodconnectju.ui.auth.AuthViewModel
 import com.deshlet.bloodconnectju.ui.auth.LoginScreen
 import com.deshlet.bloodconnectju.ui.auth.RegisterScreen
+import com.deshlet.bloodconnectju.ui.donors.DonorDetailScreen
+import com.deshlet.bloodconnectju.ui.donors.DonorDirectoryScreen
 import com.deshlet.bloodconnectju.ui.home.HomeScreen
 import com.deshlet.bloodconnectju.ui.onboarding.OnboardingScreen
 import com.deshlet.bloodconnectju.ui.requests.CreateRequestScreen
@@ -38,9 +40,12 @@ private object Routes {
     const val CREATE_REQUEST = "requests/create"
     const val REQUEST_DETAIL = "requests/{id}"
     const val MATCHING_DONORS = "requests/{id}/donors"
+    const val DONORS = "donors"
+    const val DONOR_DETAIL = "donors/{id}"
 
     fun requestDetail(id: Int) = "requests/$id"
     fun matchingDonors(id: Int) = "requests/$id/donors"
+    fun donorDetail(id: Int) = "donors/$id"
 }
 
 @Composable
@@ -113,7 +118,21 @@ fun BloodConnectNavHost(
             HomeScreen(
                 onLoggedOut = { navController.navigate(Routes.LOGIN) { popUpTo(0) } },
                 onViewRequests = { navController.navigate(Routes.REQUESTS) },
+                onViewDonors = { navController.navigate(Routes.DONORS) },
             )
+        }
+        composable(Routes.DONORS) {
+            DonorDirectoryScreen(
+                onDonorClick = { id -> navController.navigate(Routes.donorDetail(id)) },
+                onBack = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = Routes.DONOR_DETAIL,
+            arguments = listOf(navArgument("id") { type = NavType.IntType }),
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getInt("id") ?: return@composable
+            DonorDetailScreen(donorId = id, onBack = { navController.popBackStack() })
         }
         composable(Routes.REQUESTS) {
             RequestsScreen(
