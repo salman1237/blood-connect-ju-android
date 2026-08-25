@@ -25,6 +25,7 @@ import com.deshlet.bloodconnectju.ui.auth.RegisterScreen
 import com.deshlet.bloodconnectju.ui.donors.DonorDetailScreen
 import com.deshlet.bloodconnectju.ui.donors.DonorDirectoryScreen
 import com.deshlet.bloodconnectju.ui.home.HomeScreen
+import com.deshlet.bloodconnectju.ui.leaderboard.LeaderboardScreen
 import com.deshlet.bloodconnectju.ui.onboarding.OnboardingScreen
 import com.deshlet.bloodconnectju.ui.requests.CreateRequestScreen
 import com.deshlet.bloodconnectju.ui.requests.MatchingDonorsScreen
@@ -42,6 +43,7 @@ private object Routes {
     const val MATCHING_DONORS = "requests/{id}/donors"
     const val DONORS = "donors"
     const val DONOR_DETAIL = "donors/{id}"
+    const val LEADERBOARD = "leaderboard"
 
     fun requestDetail(id: Int) = "requests/$id"
     fun matchingDonors(id: Int) = "requests/$id/donors"
@@ -119,7 +121,11 @@ fun BloodConnectNavHost(
                 onLoggedOut = { navController.navigate(Routes.LOGIN) { popUpTo(0) } },
                 onViewRequests = { navController.navigate(Routes.REQUESTS) },
                 onViewDonors = { navController.navigate(Routes.DONORS) },
+                onViewLeaderboard = { navController.navigate(Routes.LEADERBOARD) },
             )
+        }
+        composable(Routes.LEADERBOARD) {
+            LeaderboardScreen(onBack = { navController.popBackStack() })
         }
         composable(Routes.DONORS) {
             DonorDirectoryScreen(

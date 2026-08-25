@@ -6,6 +6,7 @@ import com.deshlet.bloodconnectju.data.remote.dto.CreateRequestBody
 import com.deshlet.bloodconnectju.data.remote.dto.DonorDetailDto
 import com.deshlet.bloodconnectju.data.remote.dto.DonorProfileUpdateRequest
 import com.deshlet.bloodconnectju.data.remote.dto.DonorSummaryDto
+import com.deshlet.bloodconnectju.data.remote.dto.LeaderboardEntryDto
 import com.deshlet.bloodconnectju.data.remote.dto.LoginRequest
 import com.deshlet.bloodconnectju.data.remote.dto.MessageResponse
 import com.deshlet.bloodconnectju.data.remote.dto.MetaResponse
@@ -88,4 +89,7 @@ interface ApiService {
 
     @GET("donors/{id}")
     suspend fun getDonor(@Path("id") id: Int): Response<DonorDetailDto>
+
+    @GET("leaderboard")
+    suspend fun getLeaderboard(): Response<List<LeaderboardEntryDto>>
 }

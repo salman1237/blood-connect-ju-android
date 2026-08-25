@@ -38,6 +38,7 @@ fun HomeScreen(
     onLoggedOut: () -> Unit,
     onViewRequests: () -> Unit,
     onViewDonors: () -> Unit,
+    onViewLeaderboard: () -> Unit,
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
     var user by remember { mutableStateOf<UserDto?>(null) }
@@ -77,6 +78,10 @@ fun HomeScreen(
                 Spacer(Modifier.size(12.dp))
                 Button(onClick = onViewDonors) {
                     Text("Donors")
+                }
+                Spacer(Modifier.size(12.dp))
+                Button(onClick = onViewLeaderboard) {
+                    Text("Leaderboard")
                 }
                 Spacer(Modifier.size(12.dp))
                 Button(onClick = {
