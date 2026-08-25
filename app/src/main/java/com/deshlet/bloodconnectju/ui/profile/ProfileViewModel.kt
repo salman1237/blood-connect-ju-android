@@ -1,5 +1,6 @@
 package com.deshlet.bloodconnectju.ui.profile
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deshlet.bloodconnectju.data.AuthRepository
@@ -21,6 +22,7 @@ data class ProfileUiState(
     val meta: MetaResponse? = null,
     val isSavingAccount: Boolean = false,
     val isSavingDonorProfile: Boolean = false,
+    val isSavingPhoto: Boolean = false,
     val isDeleting: Boolean = false,
     val errorMessage: String? = null,
     val fieldErrors: Map<String, List<String>> = emptyMap(),
@@ -82,6 +84,42 @@ class ProfileViewModel @Inject constructor(
                     isSavingDonorProfile = false,
                     errorMessage = result.message,
                     fieldErrors = result.fieldErrors,
+                )
+            }
+        }
+    }
+
+    fun uploadPhoto(uri: Uri) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isSavingPhoto = true, errorMessage = null, statusMessage = null)
+            when (val result = profileRepository.uploadPhoto(uri)) {
+                is ProfileResult.Success -> _uiState.value = _uiState.value.copy(
+                    isSavingPhoto = false,
+                    user = result.user,
+                    statusMessage = "Photo updated.",
+                )
+
+                is ProfileResult.Failure -> _uiState.value = _uiState.value.copy(
+                    isSavingPhoto = false,
+                    errorMessage = result.message,
+                )
+            }
+        }
+    }
+
+    fun removePhoto() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isSavingPhoto = true, errorMessage = null, statusMessage = null)
+            when (val result = profileRepository.removePhoto()) {
+                is ProfileResult.Success -> _uiState.value = _uiState.value.copy(
+                    isSavingPhoto = false,
+                    user = result.user,
+                    statusMessage = "Photo removed.",
+                )
+
+                is ProfileResult.Failure -> _uiState.value = _uiState.value.copy(
+                    isSavingPhoto = false,
+                    errorMessage = result.message,
                 )
             }
         }

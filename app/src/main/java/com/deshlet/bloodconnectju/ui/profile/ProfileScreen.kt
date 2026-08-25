@@ -2,6 +2,11 @@
 
 package com.deshlet.bloodconnectju.ui.profile
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,19 +18,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,6 +47,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -117,7 +128,13 @@ private fun ProfileContent(
             Text(message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
         }
 
-        AccountCard(user, uiState, onSave = viewModel::updateAccount)
+        AccountCard(
+            user = user,
+            uiState = uiState,
+            onSave = viewModel::updateAccount,
+            onUploadPhoto = viewModel::uploadPhoto,
+            onRemovePhoto = viewModel::removePhoto,
+        )
         DonorProfileCard(user, uiState, onSave = viewModel::updateDonorProfile)
 
         OutlinedButton(onClick = onLogOut, modifier = Modifier.fillMaxWidth()) {
@@ -131,23 +148,62 @@ private fun ProfileContent(
 }
 
 @Composable
-private fun AccountCard(user: UserDto, uiState: ProfileUiState, onSave: (String, String) -> Unit) {
+private fun AccountCard(
+    user: UserDto,
+    uiState: ProfileUiState,
+    onSave: (String, String) -> Unit,
+    onUploadPhoto: (Uri) -> Unit,
+    onRemovePhoto: () -> Unit,
+) {
     var name by remember(user.id) { mutableStateOf(user.name) }
     var email by remember(user.id) { mutableStateOf(user.email) }
+
+    // The system Photo Picker (Android 13+, backported to API 24+ by the
+    // activity library) — no READ_MEDIA_IMAGES/READ_EXTERNAL_STORAGE
+    // permission needed, unlike a raw ACTION_GET_CONTENT/gallery intent.
+    val pickPhotoLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) onUploadPhoto(uri)
+    }
 
     Card {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("Account", style = MaterialTheme.typography.titleMedium)
-            // Display-only, matching web's x-user-avatar — a real photo
-            // when the account has one, initials otherwise. No upload/
-            // remove-photo action here yet: that's a web-only feature so
-            // far, the API has no avatar endpoint for the Android client
-            // to call (see the Laravel repo's Phase 27 note).
-            UserAvatar(
-                name = user.name,
-                avatarUrl = user.avatar_url,
-                modifier = Modifier.size(72.dp),
-            )
+            // Mirrors web's upload-photo form: a real photo when the
+            // account has one, initials otherwise, with upload/remove
+            // actions right next to it — visible everywhere avatar_url is
+            // surfaced (UserResource), same as web's x-user-avatar.
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Box {
+                    UserAvatar(
+                        name = user.name,
+                        avatarUrl = user.avatar_url,
+                        modifier = Modifier.size(72.dp),
+                    )
+                    if (uiState.isSavingPhoto) {
+                        Box(
+                            modifier = Modifier.matchParentSize().background(Color.Black.copy(alpha = 0.35f), CircleShape),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp, color = Color.White)
+                        }
+                    }
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
+                    TextButton(
+                        onClick = { pickPhotoLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+                        enabled = !uiState.isSavingPhoto,
+                    ) {
+                        Icon(Icons.Filled.CameraAlt, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(Modifier.size(6.dp))
+                        Text("Upload photo")
+                    }
+                    if (user.avatar_url != null) {
+                        TextButton(onClick = onRemovePhoto, enabled = !uiState.isSavingPhoto) {
+                            Text("Remove photo", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
+                }
+            }
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },

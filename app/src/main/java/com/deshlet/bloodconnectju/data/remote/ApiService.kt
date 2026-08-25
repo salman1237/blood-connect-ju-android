@@ -18,12 +18,16 @@ import com.deshlet.bloodconnectju.data.remote.dto.RegisterRequest
 import com.deshlet.bloodconnectju.data.remote.dto.RequestStatsDto
 import com.deshlet.bloodconnectju.data.remote.dto.UnregisterPushTokenRequest
 import com.deshlet.bloodconnectju.data.remote.dto.UserDto
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.HTTP
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -57,6 +61,13 @@ interface ApiService {
     // request with a body past Retrofit's annotation processor.
     @HTTP(method = "DELETE", path = "profile", hasBody = true)
     suspend fun deleteAccount(@Body body: DeleteAccountRequest): Response<Unit>
+
+    @Multipart
+    @POST("profile/photo")
+    suspend fun uploadPhoto(@Part photo: MultipartBody.Part): Response<UserDto>
+
+    @DELETE("profile/photo")
+    suspend fun deletePhoto(): Response<UserDto>
 
     @GET("requests")
     suspend fun listRequests(
