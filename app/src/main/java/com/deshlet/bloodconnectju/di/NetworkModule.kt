@@ -20,7 +20,7 @@ import javax.inject.Singleton
  * controllers use, so this contract can be pinned independently. Keep in
  * sync with routes/api.php on the Laravel backend.
  */
-private const val BASE_URL = "https://blood.deshlet.com/api/v1/"
+private const val BASE_URL = "https://bloodconnectju.org/api/v1/"
 
 @Module
 @InstallIn(SingletonComponent::class)
