@@ -4,6 +4,8 @@ import android.util.Log
 import com.pusher.client.Pusher
 import com.pusher.client.PusherOptions
 import com.pusher.client.channel.SubscriptionEventListener
+import com.pusher.client.connection.ConnectionEventListener
+import com.pusher.client.connection.ConnectionStateChange
 import com.pusher.client.util.HttpAuthorizer
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -64,7 +66,17 @@ class RealtimeService @Inject constructor(
             .setAuthorizer(authorizer)
 
         return Pusher(REVERB_KEY, options).also {
-            it.connect()
+            it.connect(
+                object : ConnectionEventListener {
+                    override fun onConnectionStateChange(change: ConnectionStateChange) {
+                        Log.i(TAG, "Connection state: ${change.previousState} -> ${change.currentState}")
+                    }
+
+                    override fun onError(message: String, code: String?, e: Exception?) {
+                        Log.w(TAG, "Connection error: $message (code=$code)", e)
+                    }
+                },
+            )
             pusher = it
         }
     }
@@ -93,8 +105,12 @@ class RealtimeService @Inject constructor(
     private fun subscribePublic(channelName: String, eventName: String, onUpdate: () -> Unit): AutoCloseable =
         runCatching {
             val channel = client().subscribe(channelName)
-            val listener = SubscriptionEventListener { _, _, _ -> onUpdate() }
+            val listener = SubscriptionEventListener { _, ev, _ ->
+                Log.i(TAG, "Event on $channelName: $ev")
+                onUpdate()
+            }
             channel.bind(eventName, listener)
+            Log.i(TAG, "Subscribed to $channelName, bound to $eventName")
             AutoCloseable {
                 runCatching { channel.unbind(eventName, listener) }
                 runCatching { client().unsubscribe(channelName) }
