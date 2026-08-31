@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -274,11 +275,21 @@ private fun DonationHistoryCard(history: List<DonationHistoryEntryDto>) {
                 )
             } else {
                 history.forEach { entry ->
+                    // weight(1f) + ellipsis on the name, same fix as
+                    // DetailRow above — a plain SpaceBetween Row lets a long
+                    // hospital name run straight into the date with no gap,
+                    // instead of truncating gracefully.
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
-                        Text(entry.hospital_name ?: "Off-platform donation", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            entry.hospital_name ?: "Off-platform donation",
+                            style = MaterialTheme.typography.bodyMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f),
+                        )
                         Text(
                             entry.confirmed_at.take(10),
                             style = MaterialTheme.typography.bodySmall,

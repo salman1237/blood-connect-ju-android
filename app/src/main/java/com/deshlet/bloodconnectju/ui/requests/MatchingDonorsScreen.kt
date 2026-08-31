@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.deshlet.bloodconnectju.ui.components.DonorRow
@@ -78,11 +79,17 @@ fun MatchingDonorsScreen(
                         Icon(Icons.Filled.SearchOff, contentDescription = null, tint = BcMutedForeground)
                     }
                     Spacer(Modifier.size(16.dp))
-                    Text("No available donors right now", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Text(
+                        "No available donors right now",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center,
+                    )
                     Text(
                         "Everyone compatible has already been notified.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
                     )
                     Row(modifier = Modifier.padding(top = 16.dp)) {
                         Button(onClick = onBack) { Text("Back to requests") }

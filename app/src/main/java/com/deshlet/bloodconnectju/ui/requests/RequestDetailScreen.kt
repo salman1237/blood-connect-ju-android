@@ -38,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.deshlet.bloodconnectju.data.remote.dto.ResponseSummaryDto
@@ -215,9 +216,19 @@ private fun ResponseRow(
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(response.donor.name ?: "Donor", fontWeight = FontWeight.Medium)
+            // weight(1f) + ellipsis on the name — same fix as
+            // DonorDetailScreen's DetailRow/DonationHistoryCard: a plain
+            // SpaceBetween Row lets a long donor name run straight into the
+            // status label with no gap instead of truncating gracefully.
+            Text(
+                response.donor.name ?: "Donor",
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
+            )
             Text(
                 statusLabel(response),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

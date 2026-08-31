@@ -27,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
@@ -63,11 +64,12 @@ fun MyRequestsScreen(
                     modifier = Modifier.align(Alignment.Center).padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Text("You haven't posted a request yet", style = MaterialTheme.typography.titleMedium)
+                    Text("You haven't posted a request yet", style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center)
                     Text(
                         "Requests you post will show up here so you can track their status.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
                     )
                     Box(Modifier.size(16.dp))
                     Button(onClick = onCreateRequest) { Text("Post a request") }

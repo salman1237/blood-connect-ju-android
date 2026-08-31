@@ -68,7 +68,16 @@ fun RequestsScreen(
     Scaffold(
         topBar = { TopAppBar(title = { Text("Blood requests") }) },
         floatingActionButton = {
-            FloatingActionButton(onClick = onCreateRequest) {
+            // FloatingActionButton defaults to primaryContainer/onPrimaryContainer
+            // (BcAccent — a pale pink in this theme, see Theme.kt), which reads as
+            // washed-out next to every other primary-action surface in the app
+            // (the Home CTA card, Save/Post buttons, ...), all of which use the
+            // vivid BcPrimary red. Matching that explicitly here instead.
+            FloatingActionButton(
+                onClick = onCreateRequest,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+            ) {
                 Icon(Icons.Filled.Add, contentDescription = "Post a blood request")
             }
         },
