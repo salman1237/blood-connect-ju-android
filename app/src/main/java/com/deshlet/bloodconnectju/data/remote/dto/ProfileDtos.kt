@@ -28,6 +28,7 @@ data class DonorProfileUpdateRequest(
     val phone: String? = null,
     val phone_has_whatsapp: Boolean = true,
     val whatsapp_number: String? = null,
+    val phone_visibility: String = "public",
     val is_available: Boolean = true,
     val last_donation_date: String? = null,
 )

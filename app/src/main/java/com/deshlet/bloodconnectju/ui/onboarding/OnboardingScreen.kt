@@ -66,6 +66,7 @@ fun OnboardingScreen(
     var phone by rememberSaveable { mutableStateOf("") }
     var hasWhatsapp by rememberSaveable { mutableStateOf(true) }
     var whatsappNumber by rememberSaveable { mutableStateOf("") }
+    var hidePhone by rememberSaveable { mutableStateOf(false) }
     var isAvailable by rememberSaveable { mutableStateOf(true) }
     var lastDonationDate by rememberSaveable { mutableStateOf("") }
     var prefilled by rememberSaveable { mutableStateOf(false) }
@@ -240,6 +241,24 @@ fun OnboardingScreen(
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
+                            .padding(16.dp),
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("Hide my number from other users", style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                "Only admins can see it. Your WhatsApp button stays hidden from everyone else too.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Switch(checked = hidePhone, onCheckedChange = { hidePhone = it })
+                    }
                 }
             }
 
@@ -305,6 +324,7 @@ fun OnboardingScreen(
                             phone = phone.ifBlank { null },
                             hasWhatsapp = hasWhatsapp,
                             whatsappNumber = whatsappNumber.ifBlank { null },
+                            phoneVisibility = if (hidePhone) "admin_only" else "public",
                             isAvailable = isAvailable,
                             lastDonationDate = lastDonationDate.ifBlank { null },
                             onSuccess = onCompleted,

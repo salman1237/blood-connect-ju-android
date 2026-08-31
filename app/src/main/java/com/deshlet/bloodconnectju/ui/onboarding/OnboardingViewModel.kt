@@ -61,6 +61,7 @@ class OnboardingViewModel @Inject constructor(
         phone: String?,
         hasWhatsapp: Boolean,
         whatsappNumber: String?,
+        phoneVisibility: String,
         isAvailable: Boolean,
         lastDonationDate: String?,
         onSuccess: () -> Unit,
@@ -78,6 +79,7 @@ class OnboardingViewModel @Inject constructor(
                 phone = phone?.ifBlank { null },
                 phone_has_whatsapp = hasWhatsapp,
                 whatsapp_number = if (hasWhatsapp) null else whatsappNumber?.ifBlank { null },
+                phone_visibility = phoneVisibility,
                 is_available = isAvailable,
                 last_donation_date = lastDonationDate?.ifBlank { null },
             )

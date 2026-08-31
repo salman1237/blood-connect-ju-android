@@ -255,6 +255,7 @@ private fun DonorProfileCard(user: UserDto, uiState: ProfileUiState, onSave: (Do
     var phone by remember(user.id) { mutableStateOf(user.phone ?: "") }
     var hasWhatsapp by remember(user.id) { mutableStateOf(user.phone_has_whatsapp ?: true) }
     var whatsappNumber by remember(user.id) { mutableStateOf(user.whatsapp_number ?: "") }
+    var hidePhone by remember(user.id) { mutableStateOf(user.phone_visibility == "admin_only") }
     var isAvailable by remember(user.id) { mutableStateOf(user.donor_profile?.is_available ?: true) }
     var lastDonationDate by remember(user.id) { mutableStateOf(user.donor_profile?.last_donation_date ?: "") }
 
@@ -373,6 +374,24 @@ private fun DonorProfileCard(user: UserDto, uiState: ProfileUiState, onSave: (Do
                     .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
                     .padding(16.dp),
             ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Hide my number from other users", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        "Only admins can see it. Your WhatsApp button stays hidden from everyone else too.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Switch(checked = hidePhone, onCheckedChange = { hidePhone = it })
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
+                    .padding(16.dp),
+            ) {
                 Column {
                     Text("Available to donate", style = MaterialTheme.typography.bodyMedium)
                     Text(
@@ -405,6 +424,7 @@ private fun DonorProfileCard(user: UserDto, uiState: ProfileUiState, onSave: (Do
                             phone = phone.ifBlank { null },
                             phone_has_whatsapp = hasWhatsapp,
                             whatsapp_number = if (hasWhatsapp) null else whatsappNumber.ifBlank { null },
+                            phone_visibility = if (hidePhone) "admin_only" else "public",
                             is_available = isAvailable,
                             last_donation_date = lastDonationDate.ifBlank { null },
                         ),
