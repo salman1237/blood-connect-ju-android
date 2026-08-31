@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.deshlet.bloodconnectju.ui.components.DonorRow
+import com.deshlet.bloodconnectju.ui.components.HallFilterChip
 import com.deshlet.bloodconnectju.ui.components.selectedChipColors
 
 private val bloodGroups = listOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-")
@@ -80,6 +81,18 @@ fun DonorDirectoryScreen(
                         label = { Text(group) },
                         colors = selectedChipColors(),
                     )
+                }
+                if (uiState.halls.isNotEmpty()) {
+                    // Mirrors web's donor directory, which filters by hall
+                    // alongside name search and blood group — the API
+                    // already supported this, just never had a control here.
+                    item {
+                        HallFilterChip(
+                            halls = uiState.halls,
+                            selected = uiState.hallFilter,
+                            onSelect = viewModel::setHallFilter,
+                        )
+                    }
                 }
             }
 

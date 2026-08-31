@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.deshlet.bloodconnectju.ui.components.HallFilterChip
 import com.deshlet.bloodconnectju.ui.components.selectedChipColors
 import com.deshlet.bloodconnectju.ui.theme.BcAccent
 import com.deshlet.bloodconnectju.ui.theme.BcAccentForeground
@@ -113,6 +114,18 @@ fun RequestsScreen(
                         label = { Text(group) },
                         colors = selectedChipColors(),
                     )
+                }
+                if (uiState.halls.isNotEmpty()) {
+                    // Mirrors web's dashboard, which filters by hall
+                    // alongside blood group — the API already supported
+                    // this, just never had a control on this screen.
+                    item {
+                        HallFilterChip(
+                            halls = uiState.halls,
+                            selected = uiState.hallFilter,
+                            onSelect = viewModel::setHallFilter,
+                        )
+                    }
                 }
             }
 

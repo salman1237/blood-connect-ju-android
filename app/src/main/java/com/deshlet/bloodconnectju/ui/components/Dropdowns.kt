@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -15,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 // Plain Box + DropdownMenu rather than ExposedDropdownMenuBox — its
@@ -50,6 +52,41 @@ fun SimpleDropdownField(
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             options.forEach { option ->
                 DropdownMenuItem(text = { Text(option) }, onClick = { onSelect(option); expanded = false })
+            }
+        }
+    }
+}
+
+/**
+ * A compact filter trigger for a long, flat option list (halls — 21 of
+ * them) that a horizontally-scrolling chip row (fine for the 8-item blood
+ * group filter) wouldn't fit reasonably. Mirrors the `hall` query param
+ * both `/requests` and `/donors` already accept server-side — that filter
+ * was fully wired through ApiService/Repository on this client already,
+ * just never surfaced as a control on either screen.
+ */
+@Composable
+fun HallFilterChip(
+    halls: List<String>,
+    selected: String?,
+    onSelect: (String?) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Box(modifier = modifier) {
+        FilterChip(
+            selected = selected != null,
+            onClick = { expanded = true },
+            label = {
+                Text(selected ?: "Hall", maxLines = 1, overflow = TextOverflow.Ellipsis)
+            },
+            trailingIcon = { Text("▾") },
+            colors = selectedChipColors(),
+        )
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(text = { Text("All halls") }, onClick = { onSelect(null); expanded = false })
+            halls.forEach { hall ->
+                DropdownMenuItem(text = { Text(hall) }, onClick = { onSelect(hall); expanded = false })
             }
         }
     }

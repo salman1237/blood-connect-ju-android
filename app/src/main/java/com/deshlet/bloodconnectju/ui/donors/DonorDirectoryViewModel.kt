@@ -3,6 +3,7 @@ package com.deshlet.bloodconnectju.ui.donors
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deshlet.bloodconnectju.data.DonorRepository
+import com.deshlet.bloodconnectju.data.ProfileRepository
 import com.deshlet.bloodconnectju.data.remote.dto.DonorSummaryDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -17,11 +18,16 @@ data class DonorDirectoryUiState(
     val donors: List<DonorSummaryDto> = emptyList(),
     val search: String = "",
     val bloodGroupFilter: String? = null,
+    val hallFilter: String? = null,
+    val halls: List<String> = emptyList(),
 )
 
 @HiltViewModel
 class DonorDirectoryViewModel @Inject constructor(
     private val repository: DonorRepository,
+    // Only for its meta() call (the hall list) — same cross-repository
+    // reach OnboardingViewModel/ProfileViewModel already use meta() from.
+    private val profileRepository: ProfileRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DonorDirectoryUiState())
@@ -30,6 +36,10 @@ class DonorDirectoryViewModel @Inject constructor(
     private var searchJob: Job? = null
 
     init {
+        viewModelScope.launch {
+            val meta = profileRepository.meta()
+            if (meta != null) _uiState.value = _uiState.value.copy(halls = meta.halls)
+        }
         refresh()
     }
 
@@ -48,6 +58,11 @@ class DonorDirectoryViewModel @Inject constructor(
         refresh()
     }
 
+    fun setHallFilter(hall: String?) {
+        _uiState.value = _uiState.value.copy(hallFilter = hall)
+        refresh()
+    }
+
     fun refresh() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
@@ -55,6 +70,7 @@ class DonorDirectoryViewModel @Inject constructor(
             val donors = repository.list(
                 search = state.search.ifBlank { null },
                 bloodGroup = state.bloodGroupFilter,
+                hall = state.hallFilter,
             )
             _uiState.value = _uiState.value.copy(isLoading = false, donors = donors ?: _uiState.value.donors)
         }

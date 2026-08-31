@@ -65,6 +65,25 @@ fun UrgencyBadge(urgency: String, modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * Mirrors web's x-verified-badge — a request that's cleared the
+ * verifier/moderation queue. Web shows this on every request card and on
+ * a request's own detail page whenever `is_verified` is true; this was
+ * already flowing through the API into BloodRequestDto but had no
+ * corresponding UI anywhere in the app until now.
+ */
+@Composable
+fun VerifiedBadge(modifier: Modifier = Modifier) {
+    Text(
+        "✓ Verified",
+        style = MaterialTheme.typography.labelSmall,
+        color = BcInfo,
+        modifier = modifier
+            .background(BcInfo.copy(alpha = 0.12f), RoundedCornerShape(50))
+            .padding(horizontal = 10.dp, vertical = 3.dp),
+    )
+}
+
 @Composable
 fun StatusPill(status: String, modifier: Modifier = Modifier) {
     val label = when (status) {

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.deshlet.bloodconnectju.data.remote.dto.BloodRequestDto
 import com.deshlet.bloodconnectju.ui.components.StatusPill
 import com.deshlet.bloodconnectju.ui.components.UrgencyBadge
+import com.deshlet.bloodconnectju.ui.components.VerifiedBadge
 import com.deshlet.bloodconnectju.ui.theme.BcAccent
 import com.deshlet.bloodconnectju.ui.theme.BcAccentForeground
 
@@ -53,6 +54,9 @@ fun RequestCard(request: BloodRequestDto, onClick: () -> Unit) {
                 Spacer(Modifier.size(4.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     UrgencyBadge(request.urgency)
+                    // Mirrors web's request-card.blade.php order exactly:
+                    // urgency, then verified (if applicable), then status.
+                    if (request.is_verified) VerifiedBadge()
                     StatusPill(request.status)
                 }
                 Spacer(Modifier.size(6.dp))

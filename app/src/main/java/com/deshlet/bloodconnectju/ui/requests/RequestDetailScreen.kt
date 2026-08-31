@@ -44,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.deshlet.bloodconnectju.data.remote.dto.ResponseSummaryDto
 import com.deshlet.bloodconnectju.ui.components.StatusPill
 import com.deshlet.bloodconnectju.ui.components.UrgencyBadge
+import com.deshlet.bloodconnectju.ui.components.VerifiedBadge
 import com.deshlet.bloodconnectju.ui.theme.BcAccent
 import com.deshlet.bloodconnectju.ui.theme.BcAccentForeground
 
@@ -115,6 +116,7 @@ fun RequestDetailScreen(
                             Spacer(Modifier.size(14.dp))
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 UrgencyBadge(request.urgency)
+                                if (request.is_verified) VerifiedBadge()
                                 StatusPill(request.status)
                             }
                         }
