@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -47,6 +48,10 @@ fun UrgencyBadge(urgency: String, modifier: Modifier = Modifier) {
         modifier = modifier
             .background(background, RoundedCornerShape(50))
             .padding(horizontal = 10.dp, vertical = 3.dp),
+        // Row defaults to Alignment.Top — fine when every child is the same
+        // height, but the 6dp dot next to a full text line sat pinned to
+        // the top of the row instead of level with the label.
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (urgency == "critical") {
             Box(

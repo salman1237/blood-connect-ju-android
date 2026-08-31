@@ -49,6 +49,7 @@ import com.deshlet.bloodconnectju.ui.theme.BcMutedForeground
 fun MatchingDonorsScreen(
     requestId: Int,
     onBack: () -> Unit,
+    onDonorClick: (Int) -> Unit,
     viewModel: MatchingDonorsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -134,7 +135,11 @@ fun MatchingDonorsScreen(
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
                         items(uiState.donors, key = { it.id }) { donor ->
-                            DonorRow(donor = donor)
+                            // Was missing onClick entirely — unlike
+                            // DonorDirectoryScreen's own DonorRow usage, this
+                            // list rendered as plain, unclickable cards with
+                            // no way to reach a donor's full profile from here.
+                            DonorRow(donor = donor, onClick = { onDonorClick(donor.id) })
                         }
                     }
                 }

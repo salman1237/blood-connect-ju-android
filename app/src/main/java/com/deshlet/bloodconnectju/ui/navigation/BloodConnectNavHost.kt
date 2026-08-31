@@ -231,6 +231,7 @@ fun BloodConnectNavHost(
                 // it), so it needs to go back to wherever it was actually
                 // opened from rather than assuming one specific origin.
                 onBack = { navController.popBackStack() },
+                onDonorClick = { donorId -> navController.navigate(Routes.donorDetail(donorId)) },
             )
         }
     }
