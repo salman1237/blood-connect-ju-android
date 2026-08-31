@@ -3,6 +3,7 @@ package com.deshlet.bloodconnectju.ui.requests
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deshlet.bloodconnectju.data.ProfileRepository
+import com.deshlet.bloodconnectju.data.RealtimeService
 import com.deshlet.bloodconnectju.data.RequestRepository
 import com.deshlet.bloodconnectju.data.remote.dto.BloodRequestDto
 import com.deshlet.bloodconnectju.data.remote.dto.RequestStatsDto
@@ -28,10 +29,17 @@ class RequestsViewModel @Inject constructor(
     // reach OnboardingViewModel/ProfileViewModel already use meta() from,
     // rather than duplicating the endpoint on RequestRepository too.
     private val profileRepository: ProfileRepository,
+    private val realtimeService: RealtimeService,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RequestsUiState())
     val uiState: StateFlow<RequestsUiState> = _uiState
+
+    // Held for the life of this ViewModel (this screen's own back-stack
+    // entry) and closed in onCleared — same subscribe-on-create,
+    // unsubscribe-on-leave shape RequestDetailViewModel/
+    // NotificationsViewModel use for their own real-time channels.
+    private val requestsFeedSubscription = realtimeService.subscribeToRequestsFeed(::refresh)
 
     init {
         viewModelScope.launch {
@@ -39,6 +47,11 @@ class RequestsViewModel @Inject constructor(
             if (meta != null) _uiState.value = _uiState.value.copy(halls = meta.halls)
         }
         refresh()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        requestsFeedSubscription.close()
     }
 
     fun refresh() {

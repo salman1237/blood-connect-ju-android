@@ -43,6 +43,18 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="blood_requests" />
+
+        <!-- pusher-websocket-android (used only for its Pusher-protocol
+             WebSocket client, see RealtimeService) bundles a legacy FCM
+             Instance ID service for Pusher's own separate push-notification
+             feature, which this app doesn't use — the manifest merger
+             rejects it outright since it has no android:exported set,
+             which every modern targetSdk requires on a component with an
+             intent-filter. Removed rather than fixed upstream since it's
+             genuinely unused dead weight for this app's purposes. -->
+        <service
+            android:name="com.pusher.android.notifications.fcm.FCMInstanceIDService"
+            tools:node="remove" />
     </application>
 
 </manifest>

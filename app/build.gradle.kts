@@ -72,6 +72,10 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
 
+    // Pusher-protocol client — Laravel Reverb (real-time updates) deliberately
+    // speaks the same wire protocol for exactly this kind of compatibility.
+    implementation(libs.pusher.websocket)
+
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

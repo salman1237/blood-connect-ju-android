@@ -26,6 +26,7 @@ class AuthRepository @Inject constructor(
     private val api: ApiService,
     private val tokenStore: TokenStore,
     private val pushTokenRepository: PushTokenRepository,
+    private val realtimeService: RealtimeService,
     private val json: Json,
 ) {
     val isLoggedIn: Flow<Boolean> = tokenStore.tokenFlow.map { !it.isNullOrBlank() }
@@ -70,6 +71,7 @@ class AuthRepository @Inject constructor(
         pushTokenRepository.unregisterCurrentToken()
         runCatching { api.logout() }
         tokenStore.clear()
+        realtimeService.disconnect()
     }
 
     suspend fun me(): UserDto? = runCatching { api.me() }.getOrNull()?.takeIf { it.isSuccessful }?.body()
