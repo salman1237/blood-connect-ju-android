@@ -12,12 +12,17 @@ data class MetaResponse(
     val org: OrgSettingsDto? = null,
 )
 
-/** Admin-editable org credit — mirrors web's partials/org-credit.blade.php, backed by App\Models\AppSetting. */
+/**
+ * Admin-editable org credit — mirrors web's partials/org-credit.blade.php,
+ * backed by App\Models\AppSetting. Each credit line has its own logo (JUCSU's
+ * next to funded_by, Badhan's next to maintained_by), not one shared logo.
+ */
 @Serializable
 data class OrgSettingsDto(
     val funded_by: String? = null,
+    val funded_by_logo_url: String? = null,
     val maintained_by: String? = null,
-    val logo_url: String? = null,
+    val maintained_by_logo_url: String? = null,
 )
 
 /**

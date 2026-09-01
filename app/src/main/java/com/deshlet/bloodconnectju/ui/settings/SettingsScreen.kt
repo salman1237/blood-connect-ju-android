@@ -114,38 +114,37 @@ fun SettingsScreen(
             }
 
             val org = uiState.org
-            if (org != null && (org.logo_url != null || org.funded_by != null || org.maintained_by != null)) {
+            if (org != null && (org.funded_by != null || org.maintained_by != null)) {
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(
                         modifier = Modifier.padding(16.dp).fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
-                        org.logo_url?.let { url ->
-                            AsyncImage(
-                                model = url,
-                                contentDescription = null,
-                                modifier = Modifier.size(40.dp),
-                            )
-                            Spacer(Modifier.size(4.dp))
-                        }
-                        org.funded_by?.let {
-                            Text(
-                                "Implemented & funded by $it",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                        org.maintained_by?.let {
-                            Text(
-                                "Maintained by $it",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
+                        org.funded_by?.let { OrgCreditLine(logoUrl = org.funded_by_logo_url, text = "Implemented & funded by $it") }
+                        org.maintained_by?.let { OrgCreditLine(logoUrl = org.maintained_by_logo_url, text = "Maintained by $it") }
                     }
                 }
             }
         }
+    }
+}
+
+/** One org-credit line: an optional logo above its text, mirroring web's partials/org-credit.blade.php. */
+@Composable
+private fun OrgCreditLine(logoUrl: String?, text: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        logoUrl?.let { url ->
+            AsyncImage(
+                model = url,
+                contentDescription = null,
+                modifier = Modifier.size(32.dp),
+            )
+        }
+        Text(
+            text,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
