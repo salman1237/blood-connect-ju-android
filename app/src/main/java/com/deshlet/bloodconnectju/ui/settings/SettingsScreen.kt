@@ -2,6 +2,8 @@
 
 package com.deshlet.bloodconnectju.ui.settings
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,10 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,8 +34,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
@@ -118,11 +125,17 @@ fun SettingsScreen(
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(
                         modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(14.dp),
                     ) {
-                        org.funded_by?.let { OrgCreditLine(logoUrl = org.funded_by_logo_url, text = "Implemented & funded by $it") }
-                        org.maintained_by?.let { OrgCreditLine(logoUrl = org.maintained_by_logo_url, text = "Maintained by $it") }
+                        org.funded_by?.let {
+                            OrgCreditLine(logoUrl = org.funded_by_logo_url, eyebrow = "Implemented & funded by", name = it)
+                        }
+                        if (org.funded_by != null && org.maintained_by != null) {
+                            HorizontalDivider()
+                        }
+                        org.maintained_by?.let {
+                            OrgCreditLine(logoUrl = org.maintained_by_logo_url, eyebrow = "Maintained by", name = it)
+                        }
                     }
                 }
             }
@@ -130,21 +143,36 @@ fun SettingsScreen(
     }
 }
 
-/** One org-credit line: an optional logo above its text, mirroring web's partials/org-credit.blade.php. */
+/** One org-credit line: a logo badge + eyebrow label + name, mirroring web's partials/org-credit.blade.php. */
 @Composable
-private fun OrgCreditLine(logoUrl: String?, text: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+private fun OrgCreditLine(logoUrl: String?, eyebrow: String, name: String) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         logoUrl?.let { url ->
-            AsyncImage(
-                model = url,
-                contentDescription = null,
-                modifier = Modifier.size(32.dp),
-            )
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(4.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                AsyncImage(
+                    model = url,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Fit,
+                )
+            }
         }
-        Text(
-            text,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        Column {
+            Text(
+                eyebrow.uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                letterSpacing = 0.5.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+        }
     }
 }
