@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 
 /** Email notification preference + logout — API twin of web's settings.blade.php (minus the language toggle, which doesn't apply to this client yet). */
@@ -108,6 +109,40 @@ fun SettingsScreen(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text("Log out")
+                    }
+                }
+            }
+
+            val org = uiState.org
+            if (org != null && (org.logo_url != null || org.funded_by != null || org.maintained_by != null)) {
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        org.logo_url?.let { url ->
+                            AsyncImage(
+                                model = url,
+                                contentDescription = null,
+                                modifier = Modifier.size(40.dp),
+                            )
+                            Spacer(Modifier.size(4.dp))
+                        }
+                        org.funded_by?.let {
+                            Text(
+                                "Implemented & funded by $it",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        org.maintained_by?.let {
+                            Text(
+                                "Maintained by $it",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
                 }
             }

@@ -9,6 +9,15 @@ data class MetaResponse(
     val departments: Map<String, List<String>>,
     val blood_groups: List<String>,
     val batches: List<String>,
+    val org: OrgSettingsDto? = null,
+)
+
+/** Admin-editable org credit — mirrors web's partials/org-credit.blade.php, backed by App\Models\AppSetting. */
+@Serializable
+data class OrgSettingsDto(
+    val funded_by: String? = null,
+    val maintained_by: String? = null,
+    val logo_url: String? = null,
 )
 
 /**

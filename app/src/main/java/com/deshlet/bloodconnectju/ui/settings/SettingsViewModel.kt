@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.deshlet.bloodconnectju.data.AuthRepository
 import com.deshlet.bloodconnectju.data.ProfileRepository
 import com.deshlet.bloodconnectju.data.ProfileResult
+import com.deshlet.bloodconnectju.data.remote.dto.OrgSettingsDto
 import com.deshlet.bloodconnectju.data.remote.dto.UserDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,7 @@ import javax.inject.Inject
 data class SettingsUiState(
     val isLoading: Boolean = true,
     val user: UserDto? = null,
+    val org: OrgSettingsDto? = null,
     val isSaving: Boolean = false,
     val errorMessage: String? = null,
 )
@@ -32,7 +34,8 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             val user = authRepository.me()
-            _uiState.value = _uiState.value.copy(isLoading = false, user = user)
+            val org = profileRepository.meta()?.org
+            _uiState.value = _uiState.value.copy(isLoading = false, user = user, org = org)
         }
     }
 
